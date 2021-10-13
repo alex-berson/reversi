@@ -1,0 +1,151 @@
+@font-face {
+    font-family: 'Roboto Slab';
+    src: url(../fonts/RobotoSlab-Regular-webfont.woff);
+}
+
+@font-face {
+    font-family: 'Roboto Slab';
+    src: url(../fonts/RobotoSlab-Bold-webfont.woff);
+    font-weight: bold;
+}
+
+:root {
+    --board-size: 0.85;
+
+    --hole-size: calc(var(--board-size) / 8 / 1.2);
+
+}
+
+body{
+    font-family: 'Roboto Slab', serif;
+    margin: 0px;
+    transition: opacity 2s ease;
+    opacity: 0;
+}
+
+#outer {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+  
+#middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+  
+#inner {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1{
+    text-align: center;
+    font-size: 25.5vw;
+    margin-top: 0px;
+    color: #214f11;
+
+    filter: brightness(150%);
+
+}
+
+.board{
+    display: grid;
+    /* grid-template-columns: repeat(8, minmax(12.0%, 1fr)); */
+
+    grid-template-columns: repeat(8, 1fr);
+
+
+    padding: 1px;
+    border: 10px solid black;
+    border-radius: 7px;
+
+    gap: 1px 1px;
+
+    background-color: black;
+
+    width: calc(var(--board-size) - 1px);
+    height: calc(var(--board-size) - 1px);
+    margin: auto;
+}
+
+.square{
+
+    display: grid;
+    justify-content: center;
+    align-content: center;
+
+
+
+    /* margin: 1px; */
+
+    /* height: calc((var(--board-size) - 2px - 8px)/ 8); */
+    /* width: calc((var(--board-size) - 2px - 8px)/ 8); */
+
+    /* height: 39px; */
+    /* width: 39px; */
+
+    background: #214f11;
+
+    filter: brightness(150%);
+
+}
+
+.disk{
+    background: black;
+    height: var(--hole-size);
+    width: var(--hole-size);
+    border-radius: 50%;
+}
+
+.square:hover{
+    cursor: pointer;
+}
+
+#designed{
+    text-align: center;
+    align-self: auto;
+    color: white;
+    font-size: 0.43em; 
+    margin-top: -1.3em;
+
+}
+
+@media (min-width: 460px) and (min-height: 460px){
+
+    :root{
+        --board-size-big: 400px;
+    }
+
+    h1{
+        font-size: 7.7em;
+    }
+    .board{
+        padding: 2px;
+        border: 15px solid;
+
+        /* gap: 2px; */
+
+        width: calc(var(--board-size-big) - 2px);
+        height: calc(var(--board-size-big) - 2px);
+
+    }
+
+    #designed{
+        font-size: 0.75em; 
+        margin-top: -1.35em;
+    }
+}
+
+.noselect {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; 
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+     user-select: none;
+}
+ 
