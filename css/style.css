@@ -116,6 +116,12 @@ h1{
     background: white;
 }
 
+.gray{
+    background: gray;
+    height: calc(var(--hole-size) / 3);
+    width: calc(var(--hole-size) / 3);
+}
+
 #designed{
     text-align: center;
     align-self: auto;
