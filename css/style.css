@@ -94,15 +94,26 @@ h1{
 
 }
 
+.square:hover{
+    cursor: pointer;
+}  
+
 .disk{
-    background: black;
+    background: #214f11;
     height: var(--hole-size);
     width: var(--hole-size);
     border-radius: 50%;
+
+    /* filter: brightness(150%); */
+
 }
 
-.square:hover{
-    cursor: pointer;
+.black{
+    background: black;
+}
+
+.white{
+    background: white;
 }
 
 #designed{

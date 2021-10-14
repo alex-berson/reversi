@@ -1,4 +1,29 @@
+let board = [];
+
 const showBoard = () => document.querySelector("body").style.opacity = 1;
+
+const resetBoard = () => board = Array.from(Array(numberOfRows), _ => Array(numberOfColumns).fill(0));
+
+const setBoard = () => {
+
+    board = [[0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,2,1,0,0,0],
+             [0,0,0,1,2,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0]]
+
+    let disks = document.querySelectorAll('.disk');
+
+    for (let r = 0 ; r < 8; r++) {
+        for(let c = 0; c < 8; c++ ) {
+            if (board[r][c] == 1) disks[r * 8 + c].classList.add("black");
+            if (board[r][c] == 2) disks[r * 8 + c].classList.add("white");
+        }
+    }
+}
 
 const disableTapZoom = () => {
     const preventDefault = (e) => e.preventDefault();
@@ -37,6 +62,8 @@ const setBoardSize = () => {
 const init = () => {
 
     // disableTapZoom();
+
+    setBoard();
 
     setBoardSize();
     
