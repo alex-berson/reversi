@@ -46,9 +46,9 @@ h1{
     text-align: center;
     font-size: 25.5vw;
     margin-top: 0px;
-    color: #214f11;
+    color: darkslategray;
 
-    filter: brightness(150%);
+    /* filter: brightness(150%); */
 
 }
 
@@ -60,16 +60,19 @@ h1{
 
 
     padding: 1px;
-    border: 10px solid black;
+    border: 10px solid darkslategray;
     border-radius: 7px;
 
     gap: 1px 1px;
 
-    background-color: black;
+    background-color: darkslategray;
 
     width: calc(var(--board-size) - 1px);
     height: calc(var(--board-size) - 1px);
     margin: auto;
+
+    /* filter: brightness(150%); */
+
 }
 
 .square{

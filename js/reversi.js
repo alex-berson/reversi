@@ -2,10 +2,15 @@ let board = [];
 let empty = 0;
 let black = 1;
 let white = 2;
+let gray = -1;
+
+let color = white;
 
 const showBoard = () => document.querySelector("body").style.opacity = 1;
 
 const resetBoard = () => board = Array.from(Array(numberOfRows), _ => Array(numberOfColumns).fill(0));
+
+const touchScreen = () => matchMedia('(hover: none)').matches;
 
 const setBoard = () => {
 
@@ -13,7 +18,7 @@ const setBoard = () => {
              [0,2,0,0,0,0,0,0],
              [0,2,0,0,0,0,0,0],
              [0,2,1,2,1,0,0,0],
-             [0,1,0,1,2,0,0,0],
+             [0,1,1,1,2,0,0,0],
              [0,0,2,0,1,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0]];
@@ -25,6 +30,10 @@ const redrawBoard = () => {
 
     for (let r = 0 ; r < 8; r++) {
         for(let c = 0; c < 8; c++ ) {
+
+            disks[r * 8 + c].style = "";
+            disks[r * 8 + c].className = "disk";
+
             if (board[r][c] == black) disks[r * 8 + c].classList.add("black");
             if (board[r][c] == white) disks[r * 8 + c].classList.add("white");
 
@@ -34,10 +43,12 @@ const redrawBoard = () => {
 }
 
 
-const validMove = (r, c, color) => {
+const validMove = (r, c) => {
 
     let reversedColor = color == black ? white : black;
     let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
+
+    if (board[r][c] != empty) return false;
 
     for (let dir of dirs) {
         try {
@@ -52,22 +63,19 @@ const validMove = (r, c, color) => {
     return false;
 }
 
-const validMoves = (color) => {
+const validMoves = () => {
 
     let moves = [];
 
     for (let r = 0 ; r < 8; r++) {
         for(let c = 0; c < 8; c++ ) {  
-            if (board[r][c] != empty) continue;
-            if (validMove(r, c, color)) moves.push([r, c]);
+            if (validMove(r, c)) moves.push([r, c]);
         }
     }
 
     for (let move of moves) {
         board[move[0]][move[1]] = -1
     }
-
-    redrawBoard();
 }
 
 const disableTapZoom = () => {
@@ -89,19 +97,100 @@ const setBoardSize = () => {
     document.documentElement.style.setProperty('--hole-size', holeSize + 'px');
 }
 
-// const disableTouch = () => {
-//     document.querySelectorAll('.square').forEach((tile) => {
-//       tile.removeEventListener('touchstart', startMove);
-//       tile.removeEventListener('mousedown', startMove);
-//     });
-// }
+const clearGray = () => {
+    for (let r = 0 ; r < 8; r++) {
+        for(let c = 0; c < 8; c++ ) {  
+            if (board[r][c] == gray) board[r][c] = 0;
+        }
+    }
+}
 
-// const enableTouch = () => {
-//     document.querySelectorAll('.square').forEach((tile) => {
-//       tile.addEventListener('touchstart', startMove);
-//       tile.addEventListener('mousedown', startMove);
-//     });
-// }
+const squareCoords = (touchedSquare) => {
+
+    let squares = document.querySelectorAll('.square');
+
+    for (let [i, square] of squares.entries()) {
+        if (square == touchedSquare) return [Math.floor(i / 8), i % 8];
+    }
+}
+
+const reverseColor = () => color = color == black ? white : black;
+
+const getReversedDisks = (r ,c) => {
+
+    let reversedColor = color == black ? white : black;
+    let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
+
+    let revesedDisks = [[r, c]];
+
+    for (let dir of dirs) {
+        try {
+            let tempRevesed = [];
+
+            if (board[r + dir[0]][c + dir[1]] == reversedColor) { 
+                tempRevesed.push([r + dir[0],c + dir[1]]);
+                for (let i = 2; i < 8; i++) {
+                    if (board[r + dir[0] * i][c + dir[1] * i] == empty) break;
+                    if (board[r + dir[0] * i][c + dir[1] * i] == reversedColor) {
+                        tempRevesed.push([r + dir[0] * i, c + dir[1] * i]);
+                    }
+                    if (board[r + dir[0] * i][c + dir[1] * i] == color) {
+                        revesedDisks  = revesedDisks.concat(tempRevesed);
+                        break;
+                    }
+                }
+            }
+        } catch {};
+    }
+
+    return revesedDisks;
+}
+
+const humanTurn = (e) => {    
+
+    let square = e.currentTarget;
+    let [r, c] = squareCoords(square);
+
+    console.log(r, c);
+
+    clearGray();
+
+    if (!validMove(r, c)) return;
+
+    let reversedDisks = getReversedDisks(r, c);
+
+    console.log(reversedDisks);
+
+    reversedDisks.forEach(disk => {
+        board[disk[0]][disk[1]] = color;
+    });
+
+    reverseColor();
+
+    validMoves();
+
+    redrawBoard();
+}
+
+const enableTouch = () => {
+    for (let cell of document.querySelectorAll('.square')){
+        if (touchScreen()){
+            cell.addEventListener("touchstart", humanTurn);
+        } else {
+            cell.addEventListener("mousedown", humanTurn);
+        }
+    }
+}
+
+const disableTouch = () => {
+    for (let cell of document.querySelectorAll('.square')){
+        if (touchScreen()){
+            cell.removeEventListener("touchstart", humanTurn);
+        } else {
+            cell.removeEventListener("mousedown", humanTurn);
+        }
+    }
+}
 
 
 const init = () => {
@@ -116,9 +205,11 @@ const init = () => {
     
     showBoard();
 
-    validMoves(white);
+    validMoves();
 
-    // setTimeout(enableTouch, 1000);
+    redrawBoard();
+
+    setTimeout(enableTouch, 1000);
 
 }
 
