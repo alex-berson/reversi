@@ -11,9 +11,7 @@
 
 :root {
     --board-size: 0.85;
-
     --hole-size: calc(var(--board-size) / 8 / 1.2);
-
 }
 
 body{
@@ -47,54 +45,27 @@ h1{
     font-size: 25.5vw;
     margin-top: 0px;
     color: darkslategray;
-
-    /* filter: brightness(150%); */
-
 }
 
 .board{
     display: grid;
-    /* grid-template-columns: repeat(8, minmax(12.0%, 1fr)); */
-
     grid-template-columns: repeat(8, 1fr);
-
-
     padding: 1px;
     border: 10px solid darkslategray;
     border-radius: 7px;
-
     gap: 1px 1px;
-
     background-color: darkslategray;
-
     width: calc(var(--board-size) - 1px);
     height: calc(var(--board-size) - 1px);
     margin: auto;
-
-    /* filter: brightness(150%); */
-
 }
 
 .square{
-
     display: grid;
     justify-content: center;
     align-content: center;
-
-
-
-    /* margin: 1px; */
-
-    /* height: calc((var(--board-size) - 2px - 8px)/ 8); */
-    /* width: calc((var(--board-size) - 2px - 8px)/ 8); */
-
-    /* height: 39px; */
-    /* width: 39px; */
-
     background: #214f11;
-
     filter: brightness(150%);
-
 }
 
 .square:hover{
@@ -106,9 +77,6 @@ h1{
     height: var(--hole-size);
     width: var(--hole-size);
     border-radius: 50%;
-
-    /* filter: brightness(150%); */
-
 }
 
 .black{
@@ -131,13 +99,13 @@ h1{
     color: white;
     font-size: 0.43em; 
     margin-top: -1.3em;
-
 }
 
 @media (min-width: 460px) and (min-height: 460px){
 
     :root{
         --board-size-big: 400px;
+        --hole-size-big: calc(var(--board-size-big) / 8 / 1.2);
     }
 
     h1{
@@ -146,12 +114,19 @@ h1{
     .board{
         padding: 2px;
         border: 15px solid;
-
-        /* gap: 2px; */
-
+        gap: 2px 2px;
         width: calc(var(--board-size-big) - 2px);
         height: calc(var(--board-size-big) - 2px);
+    }
 
+    .disk{
+        height: var(--hole-size-big);
+        width: var(--hole-size-big);    
+    }
+
+    .gray{
+        height: calc(var(--hole-size-big) / 3);
+        width: calc(var(--hole-size-big) / 3);
     }
 
     #designed{
