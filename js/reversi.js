@@ -2,9 +2,11 @@ let board = [];
 let empty = 0;
 let black = 1;
 let white = 2;
-let gray = -1;
+let gray = 100;
+let blackDot = -1;
+let whiteDot = -2;
 let draw = false;
-let timeLimit = 600;
+let timeLimit = 2000;
 
 let color = black;
 
@@ -15,6 +17,9 @@ const resetBoard = () => board = Array.from(Array(numberOfRows), _ => Array(numb
 const touchScreen = () => matchMedia('(hover: none)').matches;
 
 const timeOver = (startTime) => new Date() - startTime >= timeLimit;
+
+// const pause = (m) => await new Promise(r => setTimeout(r, m));
+
 
 const reverseColor = () => color = color == black ? white : black;
 
@@ -51,6 +56,8 @@ const redrawBoard = () => {
             if (board[r][c] == black) disks[r * 8 + c].classList.add("black");
             if (board[r][c] == white) disks[r * 8 + c].classList.add("white");
             if (board[r][c] == gray) disks[r * 8 + c].classList.add("gray");
+            if (board[r][c] == blackDot) disks[r * 8 + c].classList.add("black-dot");
+            if (board[r][c] == whiteDot) disks[r * 8 + c].classList.add("white-dot");
         }
     }
 }
@@ -94,7 +101,7 @@ const getValidMoves = (board, color) => {
 
 const setHints = (moves) => {
     for (let move of moves) {
-        board[move[0]][move[1]] = -1
+        board[move[0]][move[1]] = gray;
     }
 } 
 
@@ -116,6 +123,8 @@ const clearHints = () => {
     for (let r = 0 ; r < 8; r++) {
         for(let c = 0; c < 8; c++ ) {  
             if (board[r][c] == gray) board[r][c] = 0;
+            if (board[r][c] == blackDot) board[r][c] = black;
+            if (board[r][c] == whiteDot) board[r][c] = white;
         }
     }
 }
@@ -171,10 +180,19 @@ let winner = (board) => {
         }
     }
 
-    return [Math.sign(blacks - whites), blacks, whites];
+    switch (Math.sign(blacks - whites)) {
+        case 1:
+            return [1, blacks, whites];
+        case 0:
+            return [0, blacks, whites];
+        case -1:
+            return [2, blacks, whites];
+    }
+
+    // return [Math.sign(blacks - whites), blacks, whites];
 }
 
-let checkWin = (board) => {
+let win = (board) => {
 
     for (let r = 0 ; r < 8; r++) {
         for(let c = 0; c < 8; c++ ) {  
@@ -195,9 +213,9 @@ const aiTurn = () => {
 
     let startTime = new Date();
 
-    clearHints();
+    // clearHints();
 
-    redrawBoard();
+    // redrawBoard();
 
     let move = monteCarlo(board, startTime, color);
 
@@ -211,6 +229,12 @@ const aiTurn = () => {
 
         reversedDisks.forEach(disk => board[disk[0]][disk[1]] = color);
 
+        reverseColor();
+
+        setHints(getValidMoves(board, color));
+
+        board[reversedDisks[0][0]][reversedDisks[0][1]] *= -1;
+
         draw = false;
 
     } catch {
@@ -219,21 +243,33 @@ const aiTurn = () => {
         draw = true;
     };
 
-    if (checkWin(board)) {console.log(winner(board)); redrawBoard(); return};
+    redrawBoard();
+    clearHints();
 
-    reverseColor();
+    if (win(board)) {console.log(winner(board)); redrawBoard(); return};
+
+
 
     if (getValidMoves(board, color).length == 0) {
         console.log("PASS HUMAN");
         if (draw) {console.log(winner(board)); return;}
         draw = true;
         reverseColor();
-        aiTurn()
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                aiTurn();
+            });
+        }); 
     } else {
         draw = false;
-        setHints(getValidMoves(board, color));
-        redrawBoard();
+        // setHints(getValidMoves(board, color));
+        // redrawBoard();
         enableTouch();
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                aiTurn();
+            });
+        }); 
     }
 }
 
@@ -251,14 +287,25 @@ const humanTurn = (e) => {
     let reversedDisks = getReversedDisks(board, color, r, c);
 
     reversedDisks.forEach(disk => board[disk[0]][disk[1]] = color);
+    board[reversedDisks[0][0]][reversedDisks[0][1]] *= -1;
+
+    console.log(board);
+
+    redrawBoard();
+
+    clearHints();
 
     reverseColor();
 
-    if (checkWin(board)) {
+    if (win(board)) {
         console.log(winner(board))
-        redrawBoard();
+        // redrawBoard();
     } else {
-        aiTurn();
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                aiTurn();
+            });
+        });  
     }
 }
 
@@ -268,8 +315,12 @@ const monteCarlo = (board, startTime, initialColor) => {
     let bestSquare, bestValue;
     let draw;
     let stats = Array.from(Array(64), _ => Array(2).fill(0));
+    let i = 0;
+    let revercedColor = initialColor == black ? white : black;
 
     do {
+        i++
+
         tempBoard = board.map(arr => arr.slice());
         color = initialColor;
         firstMove = null;
@@ -310,7 +361,7 @@ const monteCarlo = (board, startTime, initialColor) => {
     
             }
 
-            if (checkWin(tempBoard) || draw) {
+            if (win(tempBoard) || draw) {
 
                 // let board1 = tempBoard.map(arr => arr.slice());
 
@@ -320,14 +371,16 @@ const monteCarlo = (board, startTime, initialColor) => {
 
                 // console.log(winner(tempBoard));
 
-                switch(winner(tempBoard)[0]) {
-                    case -1:
-                        stats[firstMove][0]++;
+                let result = winner(tempBoard)[0];
+
+                switch(result) {
+                    case 1: 
+                    case 2:
+                        result == initialColor ? stats[firstMove][0]++ : stats[firstMove][0]--;
                         break;
-                    case 1:
-                        stats[firstMove][0]--; 
-                        break;
-                }
+                    default:
+                        break;           
+                   }
 
                 stats[firstMove][1]++;
                 break;
@@ -337,10 +390,13 @@ const monteCarlo = (board, startTime, initialColor) => {
 
     } while (!timeOver(startTime));
 
-    console.log(new Date() - startTime);
+    console.log(i, initialColor);
 
 
-    console.log(stats);
+    let stats1 = stats.map(arr => arr.slice());
+
+    console.log(stats1);
+
 
     bestValue = -Infinity    
 
@@ -379,13 +435,13 @@ const disableTouch = () => {
     }
 }
 
-const init = () => {
+const init = async() => {
 
     disableTapZoom();
 
     setBoard();
 
-    redrawBoard();
+    // redrawBoard();
 
     setBoardSize();
     
@@ -395,7 +451,17 @@ const init = () => {
 
     redrawBoard();
 
-    setTimeout(enableTouch, 1000);
+    clearHints();
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            aiTurn();
+        });
+    });
+
+    // setTimeout(enableTouch, 1000);
 
 }
 

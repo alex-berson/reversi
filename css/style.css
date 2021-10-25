@@ -87,6 +87,32 @@ h1{
     background: white;
 }
 
+.black-dot{
+    box-sizing: border-box;
+    background: darkred;
+    border: calc(var(--hole-size) / 3) solid black;
+
+}
+
+.white-dot{
+    box-sizing: border-box;
+    background: darkred;
+    border: calc(var(--hole-size) / 3) solid white;
+}
+
+.black-dot{
+    box-sizing: border-box;
+    background: black;
+    border: 1px solid darkred;
+
+}
+
+.white-dot{
+    box-sizing: border-box;
+    background: white;
+    border: 1px solid darkred;
+}
+
 .gray{
     background: gray;
     height: calc(var(--hole-size) / 3);
