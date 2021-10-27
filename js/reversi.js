@@ -201,7 +201,25 @@ let mobility = (board, color) => {
 
 let corners = (board, color) => {
 
-    
+    let whiteCorners = 0;
+    let blackCorners = 0;
+
+    if (board[0][0] == black) blackCorners++;
+    if (board[0][0] == white) whiteCorners++;
+    if (board[0][7] == black) blackCorners++;
+    if (board[0][7] == white) whiteCorners++;
+    if (board[7][0] == black) blackCorners++;
+    if (board[7][0] == white) whiteCorners++;
+    if (board[7][7] == black) blackCorners++;
+    if (board[7][7] == white) whiteCorners++;
+
+    if (whiteCorners + blackCorners == 0) return 0;
+
+    if (color == black) {
+        return 100 * (blackCorners - whiteCorners) / (blackCorners + whiteCorners);
+    } else {
+        return 100 * (whiteCorners - blackCorners) / (blackCorners + whiteCorners);
+    }
 }
 
 let potential = (board, color) => {
