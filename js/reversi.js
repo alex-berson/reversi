@@ -138,7 +138,7 @@ const squareCoords = (touchedSquare) => {
     }
 }
 
-const getReversedDisks = (board, color, r ,c) => {
+const getFlippedDisks = (board, color, r ,c) => {
 
     let reversedColor = color == black ? white : black;
     let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
@@ -166,6 +166,50 @@ const getReversedDisks = (board, color, r ,c) => {
     return revesedDisks;
 }
 
+let difference = (board, color) => {
+
+    let whites = 0;
+    let blacks = 0;
+
+    for (let r = 0 ; r < 8; r++) {
+        for(let c = 0; c < 8; c++ ) {  
+            if (board[r][c] == white) whites++;
+            if (board[r][c] == black) blacks++;
+        }
+    }
+
+    if (color == black) {
+        return 100 * (blacks - whites) / (blacks + whites);
+    } else {
+        return 100 * (whites - blacks) / (whites + blacks);
+    }
+}
+
+let mobility = (board, color) => {
+
+   
+}
+
+let corners = (board, color) => {
+
+    
+}
+
+let potential = (board, color) => {
+
+
+}
+
+let edges = (board, color) => {
+
+
+}
+
+let stability = (board, color) => {
+
+
+}
+
 let winner = (board) => {
 
     let whites = 0;
@@ -173,10 +217,8 @@ let winner = (board) => {
 
     for (let r = 0 ; r < 8; r++) {
         for(let c = 0; c < 8; c++ ) {  
-
             if (board[r][c] == white) whites++;
-            if (board[r][c] == black) blacks++;
-   
+            if (board[r][c] == black) blacks++;   
         }
     }
 
@@ -225,7 +267,7 @@ const aiTurn = () => {
 
         // await new Promise(p => setTimeout(p, 2000));
 
-        let reversedDisks = getReversedDisks(board, color, move[0], move[1]);
+        let reversedDisks = getFlippedDisks(board, color, move[0], move[1]);
 
         reversedDisks.forEach(disk => board[disk[0]][disk[1]] = color);
 
@@ -284,7 +326,7 @@ const humanTurn = (e) => {
 
     disableTouch();
 
-    let reversedDisks = getReversedDisks(board, color, r, c);
+    let reversedDisks = getFlippedDisks(board, color, r, c);
 
     reversedDisks.forEach(disk => board[disk[0]][disk[1]] = color);
     board[reversedDisks[0][0]][reversedDisks[0][1]] *= -1;
@@ -338,7 +380,7 @@ const monteCarlo = (board, startTime, initialColor) => {
 
                 if (firstMove == null) firstMove = move[0] * 8 + move[1];
 
-                reversedDisks = getReversedDisks(tempBoard, color, move[0], move[1]);
+                reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
 
                 reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
 
@@ -373,16 +415,16 @@ const monteCarlo = (board, startTime, initialColor) => {
 
                 let result = winner(tempBoard)[0];
 
-                switch(result) {
-                    case 1: 
-                    case 2:
-                        result == initialColor ? stats[firstMove][0]++ : stats[firstMove][0]--;
-                        break;
-                    default:
-                        break;           
-                   }
-
                 stats[firstMove][1]++;
+
+                if (!result) break;
+
+                if (result == initialColor) {
+                    stats[firstMove][0]++;
+                } else {
+                    stats[firstMove][0]--;
+                }
+
                 break;
             }  
                     
