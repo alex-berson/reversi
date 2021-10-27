@@ -259,9 +259,47 @@ let potentialMobility = (board, color) => {
     }   
 }
 
+let getStableDisks = (board, color) => {
+
+    let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
+    let corners = [[0,0],[0,7],[7,0],[7,7]];
+    let disks = 0;
+
+    for (let corner of corners) {
+
+        if (board[corner[0]][corner[1]] != color) continue;
+
+        disks++;
+
+        for (let dir of dirs) {
+
+            if (validCoords(corner[0] + dir[0], corner[1] + dir[1]) && board[corner[0] + dir[0]][corner[1] + dir[1]] == color) { 
+
+                disks++;
+
+                for (let i = 2; i < 8; i++) {
+                    if (validCoords(corner[0] + dir[0] * i, corner[1] + dir[1] * i) && board[corner[0] + dir[0] * i][corner[1] + dir[1] * i] != color) break;
+                    disks++;
+                }
+            }
+        }
+    }
+
+    return disks;
+}
+
 let stability = (board, color) => {
 
+    let whiteDisks = getStableDisks(board, white);
+    let blackDisks = getStableDisks(board, black);
 
+    if (whiteDisks + blackDisks == 0) return 0;
+
+    if (color == black) {
+        return 100 * (blackDisks - whiteDisks) / (blackDisks + whiteDisks);
+    } else {
+        return 100 * (whiteDisks - blackDisks) / (blackDisks + whiteDisks);
+    }   
 }
 
 let edges = (board, color) => {
