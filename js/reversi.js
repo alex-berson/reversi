@@ -187,7 +187,16 @@ let difference = (board, color) => {
 
 let mobility = (board, color) => {
 
-   
+    let whiteMoves = getValidMoves(board, white).length;
+    let blackMoves = getValidMoves(board, black).length;
+
+    if (whiteMoves + blackMoves == 0) return 0;
+
+    if (color == black) {
+        return 100 * (blackMoves - whiteMoves) / (blackMoves + whiteMoves);
+    } else {
+        return 100 * (whiteMoves - blackMoves) / (blackMoves + whiteMoves);
+    }   
 }
 
 let corners = (board, color) => {
