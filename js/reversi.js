@@ -222,17 +222,49 @@ let corners = (board, color) => {
     }
 }
 
-let potential = (board, color) => {
+let getPotentialMoves = (board, color) => {
+
+    let reversedColor = color == black ? white : black;
+    let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
+    let moves = 0;
+
+    for (let r = 0 ; r < 8; r++) {
+        for(let c = 0; c < 8; c++ ) {  
+
+            if (board[r][c] != empty) continue;
+
+            for (let dir of dirs) {
+                if (validCoords(r + dir[0], c + dir[1]) && board[r + dir[0]][c + dir[1]] == reversedColor) { 
+                    moves++;
+                    break;
+                }
+            }
+        }
+    }
+
+    return moves;
+}
+
+let potentialMobility = (board, color) => {
+
+    let whiteMoves = getPotentialMoves(board, white);
+    let blackMoves = getPotentialMoves(board, black);
+
+    if (whiteMoves + blackMoves == 0) return 0;
+
+    if (color == black) {
+        return 100 * (blackMoves - whiteMoves) / (blackMoves + whiteMoves);
+    } else {
+        return 100 * (whiteMoves - blackMoves) / (blackMoves + whiteMoves);
+    }   
+}
+
+let stability = (board, color) => {
 
 
 }
 
 let edges = (board, color) => {
-
-
-}
-
-let stability = (board, color) => {
 
 
 }
