@@ -7,8 +7,10 @@ let blackDot = -1;
 let whiteDot = -2;
 let draw = false;
 let timeLimit = 2000;
+let set = 0;
+let statWin = [0,0];
 
-let color = black;
+let firstColor = color = white;
 
 const showBoard = () => document.querySelector("body").style.opacity = 1;
 
@@ -16,7 +18,7 @@ const resetBoard = () => board = Array.from(Array(numberOfRows), _ => Array(numb
 
 const touchScreen = () => matchMedia('(hover: none)').matches;
 
-const timeOver = (startTime) => new Date() - startTime >= timeLimit;
+const timeOver = (startTime, timeLimit) => new Date() - startTime >= timeLimit;
 
 // const pause = (m) => await new Promise(r => setTimeout(r, m));
 
@@ -116,11 +118,19 @@ const getValidMove = (board, color) => {
     // console.log(cells);
 
     for (let row of rows) {
+
+    // for (let i = 0; i < 8; i ++) {
         
         // let columns = shuffle([0,1,2,3,4,5,6,7]);
 
-        for(let column of columns) {  
+        for (let column of columns) {  
+
+        // for (let j = 0; j < 8; j ++) {
+
+            // if (validMove(board, color, rows[i], columns[j])) return [rows[i], columns[j]];
+
             if (validMove(board, color, row, column)) return [row, column];
+
         }
     }
 
@@ -131,6 +141,58 @@ const getValidMove = (board, color) => {
 
     //     if (validMove(board, color, row, column)) return [row, column];
     // }
+
+    return [];
+}
+
+const checkMove = (board, color, r ,c) => {
+
+    let reversedColor = color == black ? white : black;
+    let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
+
+    if (board[r][c] != empty) return false;
+
+    let revesedDisks = [[r, c]];
+
+    for (let dir of dirs) {
+        let tempRevesed = [];
+
+        if (validCoords(r + dir[0], c + dir[1]) && board[r + dir[0]][c + dir[1]] == reversedColor) { 
+            tempRevesed.push([r + dir[0],c + dir[1]]);
+            for (let i = 2; i < 8; i++) {
+                if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == empty) break;
+                if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == reversedColor) {
+                    tempRevesed.push([r + dir[0] * i, c + dir[1] * i]);
+                }
+                if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == color) {
+                    revesedDisks  = revesedDisks.concat(tempRevesed);
+                    break;
+                }
+            }
+        }
+    }
+
+    if (revesedDisks.length != 1) {
+        return revesedDisks;
+    } else {
+        return false;
+    }
+}
+
+const getValidMove2 = (board, color) => {
+
+    let rows = shuffle([0,1,2,3,4,5,6,7]);
+    let columns = shuffle([0,1,2,3,4,5,6,7]);
+
+    for (let row of rows) {
+
+        for (let column of columns) {  
+            
+            let move = checkMove(board, color, row, column);
+
+            if (move) return move;
+        }
+    }
 
     return [];
 }
@@ -146,36 +208,6 @@ const getValidMoves = (board, color) => {
     }
 
     return moves;
-}
-
-const setHints = (moves) => {
-    for (let move of moves) {
-        board[move[0]][move[1]] = gray;
-    }
-} 
-
-const setBoardSize = () => {
-
-    if (screen.height > screen.width) {
-         var boardSize = Math.ceil(screen.width * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--board-size')) / 8) * 8;
-    } else {
-         var boardSize = Math.ceil(window.innerHeight * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--board-size')) / 8) * 8;
-    }
-
-    let holeSize = Math.ceil(boardSize / 8 / 1.2 / 2) * 2;
-
-    document.documentElement.style.setProperty('--board-size', boardSize + 'px');
-    document.documentElement.style.setProperty('--hole-size', holeSize + 'px');
-}
-
-const clearHints = () => {
-    for (let r = 0 ; r < 8; r++) {
-        for(let c = 0; c < 8; c++ ) {  
-            if (board[r][c] == gray) board[r][c] = 0;
-            if (board[r][c] == blackDot) board[r][c] = black;
-            if (board[r][c] == whiteDot) board[r][c] = white;
-        }
-    }
 }
 
 const squareCoords = (touchedSquare) => {
@@ -213,6 +245,36 @@ const getFlippedDisks = (board, color, r ,c) => {
     }
 
     return revesedDisks;
+}
+
+const setHints = (moves) => {
+    for (let move of moves) {
+        board[move[0]][move[1]] = gray;
+    }
+} 
+
+const clearHints = () => {
+    for (let r = 0 ; r < 8; r++) {
+        for(let c = 0; c < 8; c++ ) {  
+            if (board[r][c] == gray) board[r][c] = 0;
+            if (board[r][c] == blackDot) board[r][c] = black;
+            if (board[r][c] == whiteDot) board[r][c] = white;
+        }
+    }
+}
+
+const setBoardSize = () => {
+
+    if (screen.height > screen.width) {
+         var boardSize = Math.ceil(screen.width * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--board-size')) / 8) * 8;
+    } else {
+         var boardSize = Math.ceil(window.innerHeight * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--board-size')) / 8) * 8;
+    }
+
+    let holeSize = Math.ceil(boardSize / 8 / 1.2 / 2) * 2;
+
+    document.documentElement.style.setProperty('--board-size', boardSize + 'px');
+    document.documentElement.style.setProperty('--hole-size', holeSize + 'px');
 }
 
 let difference = (board, color) => {
@@ -400,24 +462,35 @@ const randomAI = () => {
     return moves[Math.floor(Math.random() * moves.length)];
 }
 
-const aiTurn = async() => {
+const aiTurn = () => {
 
     let move, move2;
     let startTime = new Date();
+
+    let depth = 4;
 
     // clearHints();
 
     // redrawBoard();
 
     if (color == black) {
-        move = monteCarlo2(board, startTime, color);
+        move = monteCarlo(board, startTime, color, 2000);
+
+        // [move, score] = minimax(board, depth, -Infinity, Infinity, true);
+
+
+
+        // move = evristik(board, color);
+
 
         // console.log(move);
 
     } else {
         // move = randomAI();
         // move = evristik(board, color);
-        move = monteCarlo(board, startTime, color);
+
+        move = monteCarlo2(board, startTime, color, 2000);
+
 
     }
 
@@ -446,7 +519,14 @@ const aiTurn = async() => {
 
     } catch {
         console.log("PASS: ", color);
-        if (draw) {console.log(winner(board)); return}
+        if (draw) {
+            if (winner(board)[0] == 1) statWin[0]++;
+            if (winner(board)[0] == 2) statWin[1]++;
+            console.log(winner(board), statWin);
+             setTimeout(init, 2000);
+             return;
+        }
+    
         draw = true;
         reverseColor();
         setHints(getValidMoves(board, color));
@@ -455,11 +535,25 @@ const aiTurn = async() => {
     redrawBoard();
     clearHints();
 
-    if (win(board)) {console.log(winner(board)); redrawBoard(); return};
+    if (win(board)) {
+        if (winner(board)[0] == 1) statWin[0]++;
+        if (winner(board)[0] == 2) statWin[1]++;
+        console.log(winner(board), statWin);
+        redrawBoard();
+        setTimeout(init, 2000);
+        return;
+    };
 
     if (getValidMoves(board, color).length == 0) {
         console.log("PASS: ", color);
-        if (draw) {console.log(winner(board)); return;}
+        if (draw) {
+            if (winner(board)[0] == 1) statWin[0]++;
+            if (winner(board)[0] == 2) statWin[1]++;
+            console.log(winner(board), statWin);
+            setTimeout(init, 2000);
+            return;
+        }
+
         draw = true;
         reverseColor();
         requestAnimationFrame(() => {
@@ -471,6 +565,8 @@ const aiTurn = async() => {
         draw = false;
         // setHints(getValidMoves(board, color));
         // redrawBoard();
+
+
         enableTouch();
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -494,6 +590,7 @@ const humanTurn = (e) => {
     let reversedDisks = getFlippedDisks(board, color, r, c);
 
     reversedDisks.forEach(disk => board[disk[0]][disk[1]] = color);
+
     board[reversedDisks[0][0]][reversedDisks[0][1]] *= -1;
 
     let board1 = board.map(arr => arr.slice());
@@ -517,7 +614,7 @@ const humanTurn = (e) => {
     }
 }
 
-const monteCarlo = (board, startTime, initialColor) => {
+const monteCarlo = (board, startTime, initialColor, timeLimit) => {
 
     let move, color, firstMove, tempBoard, reversedDisks, validMoves;
     let bestSquare, bestValue;
@@ -598,7 +695,7 @@ const monteCarlo = (board, startTime, initialColor) => {
                     
         } while(true);
 
-    } while (!timeOver(startTime));
+    } while (!timeOver(startTime, timeLimit));
 
     console.log(i, initialColor);
 
@@ -620,7 +717,7 @@ const monteCarlo = (board, startTime, initialColor) => {
     return [Math.floor(bestSquare / 8), bestSquare % 8];
 }
 
-const monteCarlo2 = (board, startTime, initialColor) => {
+const monteCarlo2 = (board, startTime, initialColor, timeLimit) => {
 
     let move, color, firstMove, tempBoard, reversedDisks, validMoves;
     let bestSquare, bestValue;
@@ -699,6 +796,106 @@ const monteCarlo2 = (board, startTime, initialColor) => {
                     
         } while(true);
 
+    } while (!timeOver(startTime, timeLimit));
+
+    console.log(i, initialColor);
+
+
+    let stats1 = stats.map(arr => arr.slice());
+
+    console.log(stats1);
+
+    bestValue = -Infinity    
+
+    for (let [i, s] of stats.entries()) {
+
+        if (s[1] == 0) continue;
+        if (s[0] / s[1] > bestValue) [bestValue, bestSquare] = [s[0] / s[1], i]
+
+    }
+
+    return [Math.floor(bestSquare / 8), bestSquare % 8];
+}
+
+const monteCarlo4 = (board, startTime, initialColor) => {
+
+    let move, color, firstMove, tempBoard, reversedDisks, validMoves;
+    let bestSquare, bestValue;
+    let pass;
+    let stats = Array.from(Array(64), _ => Array(2).fill(0));
+    let i = 0;
+    let revercedColor = initialColor == black ? white : black;
+
+    if (getValidMoves(board, initialColor).length == 0) return undefined;
+
+    do {
+        i++
+
+        tempBoard = board.map(arr => arr.slice());
+        color = initialColor;
+        firstMove = null;
+        pass = false;
+        
+        do{
+
+            move = getValidMove(tempBoard, color);
+
+            if (move.length != 0) {
+
+                pass = false;
+
+                if (firstMove == null) firstMove = move[0] * 8 + move[1];
+
+                reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
+
+                reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+
+                color = color == black ? white : black;
+
+                // let board1 = tempBoard.map(arr => arr.slice());
+
+                // console.log(move[0], move[1], firstMove);
+
+                // console.log(board1);
+
+                // break;
+            } 
+            
+            if (move.length == 0 && !pass){
+
+                pass = true;
+                color = color == black ? white : black;
+                continue;
+    
+            }
+
+            if (win(tempBoard) || pass) {
+
+                // let board1 = tempBoard.map(arr => arr.slice());
+
+                // console.log(board1);
+
+                // console.log(new Date() - startTime);
+
+                // console.log(winner(tempBoard));
+
+                let result = winner(tempBoard);
+
+                stats[firstMove][1]++;
+
+                if (!result[0]) break;
+
+                if (result[0] == initialColor) {
+                    stats[firstMove][0] += 1 * Math.abs(result[1] - result[1] / 64);
+                } else {
+                    stats[firstMove][0] -= 1 * Math.abs(result[1] - result[1] / 64);
+                }
+
+                break;
+            }  
+                    
+        } while(true);
+
     } while (!timeOver(startTime));
 
     console.log(i, initialColor);
@@ -718,6 +915,183 @@ const monteCarlo2 = (board, startTime, initialColor) => {
     }
 
     return [Math.floor(bestSquare / 8), bestSquare % 8];
+}
+
+const monteCarlo3 = (board, startTime, initialColor) => {
+
+    let move, color, firstMove, tempBoard, reversedDisks, validMoves;
+    let bestSquare, bestValue;
+    let pass;
+    let stats = Array.from(Array(64), _ => Array(2).fill(0));
+    let i = 0;
+    let revercedColor = initialColor == black ? white : black;
+
+    if (getValidMoves(board, initialColor).length == 0) return undefined;
+
+    do {
+        i++
+
+        tempBoard = board.map(arr => arr.slice());
+        color = initialColor;
+        firstMove = null;
+        pass = false;
+        
+        do{
+
+            move = getValidMove2(tempBoard, color);
+
+            if (move.length != 0) {
+
+                pass = false;
+
+                if (firstMove == null) firstMove = move[0][0] * 8 + move[0][1];
+
+                // move = getFlippedDisks(tempBoard, color, move[0], move[1]);
+
+                move.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+
+
+                // reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+
+                color = color == black ? white : black;
+
+                // let board1 = tempBoard.map(arr => arr.slice());
+
+                // console.log(move[0], move[1], firstMove);
+
+                // console.log(board1);
+
+                // break;
+            } 
+            
+            if (move.length == 0 && !pass){
+
+                pass = true;
+                color = color == black ? white : black;
+                continue;
+    
+            }
+
+            if (win(tempBoard) || pass) {
+
+                // let board1 = tempBoard.map(arr => arr.slice());
+
+                // console.log(board1);
+
+                // console.log(new Date() - startTime);
+
+                // console.log(winner(tempBoard));
+
+                let result = winner(tempBoard)[0];
+
+                stats[firstMove][1]++;
+
+                if (!result) break;
+
+                if (result == initialColor) {
+                    stats[firstMove][0]++;
+                } else {
+                    stats[firstMove][0]--;
+                }
+
+                break;
+            }  
+                    
+        } while(true);
+
+    } while (!timeOver(startTime));
+
+    console.log(i, initialColor);
+
+
+    let stats1 = stats.map(arr => arr.slice());
+
+    console.log(stats1);
+
+    bestValue = -Infinity    
+
+    for (let [i, s] of stats.entries()) {
+
+        if (s[1] == 0) continue;
+        if (s[0] / s[1] > bestValue) [bestValue, bestSquare] = [s[0] / s[1], i]
+
+    }
+
+    return [Math.floor(bestSquare / 8), bestSquare % 8];
+}
+
+const terminalNode = (board) => {
+
+    let revercedColor = color == black ? white : black;
+    
+    return win(board) || (getValidMoves(board, color) == 0 && getValidMoves(board, revercedColor) == 0);
+}
+
+const minimax = (board, depth, alpha, beta, maximizingPlayer) => {
+
+    let tempBoard;
+    let revercedColor = color == black ? white : black;
+    // let color = maximizingPlayer ? color : revercedColor;
+
+    let validMoves = getValidMoves(board, color);
+
+    let validMovesOpponent = getValidMoves(board, revercedColor);
+
+    // let opponent = maximizingPlayer ? false : true;
+
+    if (depth == 0 || win(board) || (validMoves.length == 0 && validMovesOpponent.length == 0)) return [null, evaluation(board, color)];
+
+    // if (timeOut(startTime)) return [null, null];
+    // if (initialColumnes != null) validMoves = [...new Set([...initialColumnes, ...validMoves])];
+
+    if (maximizingPlayer && validMoves.length == 0) return minimax(board, depth - 1, alpha, beta, false);
+    if (!maximizingPlayer && validMovesOpponent.length == 0) return minimax(board, depth - 1, alpha, beta, true);
+
+    if (maximizingPlayer) {
+
+        let bestMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        let bestScore = -Infinity;
+
+        for (let move of validMoves) {
+
+            tempBoard = board.map(arr => arr.slice());
+    
+            reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
+            reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+            
+            [_, score] = minimax(tempBoard, depth - 1, alpha, beta, false);
+
+            if (score > bestScore) [bestScore, bestMove] = [score, move];
+
+            alpha = Math.max(alpha, score);
+
+            if (alpha >= beta) break;
+        }
+         
+        return [bestMove, bestScore];
+
+    } else {
+        
+        let bestMove = validMovesOpponent[Math.floor(Math.random() * validMovesOpponent.length)];
+        let bestScore = Infinity;
+
+        for (let move of validMoves) {
+
+            tempBoard = board.map(arr => arr.slice());
+    
+            reversedDisks = getFlippedDisks(tempBoard, revercedColor, move[0], move[1]);
+            reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = revercedColor);
+
+            [_, score] = minimax(tempBoard, depth - 1, alpha, beta, true);
+    
+            if (score < bestScore) [bestScore, bestMove] = [score, move];
+
+            beta = Math.min(beta, score);
+
+            if (beta <= alpha) break;
+        }
+        return [bestMove, bestScore];
+    }
 }
 
 const matrixEval = (board, color) => {
@@ -750,6 +1124,11 @@ const evaluation = (board, color) => {
     let score = 0;
     
     score = 25 * difference(board, color) + 30 * corners(board, color) + 5 * mobility(board, color) + 5 * potentialMobility(board, color) + 25 * stability(board, color);
+
+
+
+    // score = matrixEval(board, color);
+
 
     return score;
 }
@@ -810,15 +1189,25 @@ const disableTouch = () => {
 
 const init = async() => {
 
+    firstColor = firstColor == black ? white : black;
+
+    color = firstColor;
+
+    set++;
+
+    console.log("SET: ", set);
+
     disableTapZoom();
 
-    setBoard();
+    // setBoard();
 
     // redrawBoard();
 
     setBoardSize();
     
     showBoard();
+
+    setBoard();
 
     setHints(getValidMoves(board, color));
 
@@ -835,7 +1224,6 @@ const init = async() => {
     });
 
     // setTimeout(enableTouch, 1000);
-
 }
 
 window.onload = () => {
