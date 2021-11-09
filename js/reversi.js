@@ -315,14 +315,12 @@ let corners = (board, color) => {
     let whiteCorners = 0;
     let blackCorners = 0;
 
-    if (board[0][0] == black) blackCorners++;
-    if (board[0][0] == white) whiteCorners++;
-    if (board[0][7] == black) blackCorners++;
-    if (board[0][7] == white) whiteCorners++;
-    if (board[7][0] == black) blackCorners++;
-    if (board[7][0] == white) whiteCorners++;
-    if (board[7][7] == black) blackCorners++;
-    if (board[7][7] == white) whiteCorners++;
+    let corners = [[0,0],[0,7],[7,0],[7,7]];
+
+    for (let corner of corners) {
+        if (board[corner[0]][corner[1]] == black) blackCorners++;\
+        if (board[corner[0]][corner[1]] == white) whiteCorners++;
+    }
 
     if (whiteCorners + blackCorners == 0) return 0;
 
@@ -367,6 +365,34 @@ let potentialMobility = (board, color) => {
         return 100 * (blackMoves - whiteMoves) / (blackMoves + whiteMoves);
     } else {
         return 100 * (whiteMoves - blackMoves) / (blackMoves + whiteMoves);
+    }   
+}
+
+let frontiers = (board, color) => {
+
+    let whites = 0;
+    let blacks = 0;
+    let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
+
+    for (let r = 0 ; r < 8; r++) {
+        for(let c = 0; c < 8; c++ ) { 
+            if (board[r][c] == empty) continue;
+
+            for (let dir of dirs) {
+                if (validCoords(r + dir[0], c + dir[1]) && board[r + dir[0]][c + dir[1]] == empty) { 
+                    board[r][c] == black ? blacks++ : whites++;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (whites + blacks == 0) return 0;
+
+    if (color == black) {
+        return 100 * (blacks - whites) / (blacks + whites);
+    } else {
+        return 100 * (whites - blacks) / (blacks + whites);
     }   
 }
 
@@ -474,7 +500,7 @@ const aiTurn = () => {
     // redrawBoard();
 
     if (color == black) {
-        move = monteCarlo(board, startTime, color, 2000);
+        move = monteCarlo2(board, startTime, color, 2000);
 
         // [move, score] = minimax(board, depth, -Infinity, Infinity, true);
 
@@ -489,7 +515,7 @@ const aiTurn = () => {
         // move = randomAI();
         // move = evristik(board, color);
 
-        move = monteCarlo2(board, startTime, color, 2000);
+        move = monteCarlo2(board, startTime, color, 20000);
 
 
     }
