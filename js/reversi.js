@@ -331,6 +331,37 @@ let corners = (board, color) => {
     }
 }
 
+let xcsquares = (board, color) => {
+
+    let whiteXCs = 0;
+    let blackXCs = 0;
+
+    let corners = [[0,0],[0,7],[7,0],[7,7]];
+    let xsquares = [[1,1],[1,6],[6,1],[6,6]];
+    let csquares = [[0,1],[0,6],[1,0],[1,7],[6,0],[6,7],[7,1],[7,6]];
+
+    for (let [i, corner] of corners.entries()) {
+
+        if (board[corner[0]][corner[1]] != empty) continue;
+
+        if (board[xsquares[i][0]][xsquares[i][1]] == black) blackXCs++;
+        if (board[xsquares[i][0]][xsquares[i][1]] == white) whiteXCs++;
+
+        if (board[csquares[2 * i][0]][csquares[2 * i][1]] == black) blackXCs++;
+        if (board[csquares[2 * i + 1][0]][csquares[2 * i + 1][1]] == black) blackXCs++;
+        if (board[csquares[2 * i][0]][csquares[2 * i][1]] == white) whiteXCs++;
+        if (board[csquares[2 * i + 1][0]][csquares[2 * i + 1][1]] == white) whiteXCs++;    
+    }
+
+    if (whiteXCs + blackXCs == 0) return 0;
+
+    if (color == black) {
+        return -100 * (blackXCs - whiteXCs) / (blackXCs + whiteXCs);
+    } else {
+        return -100 * (whiteXCs - blackXCs) / (blackXCs + whiteXCs);
+    }
+}
+
 let getPotentialMoves = (board, color) => {
 
     let reversedColor = color == black ? white : black;
