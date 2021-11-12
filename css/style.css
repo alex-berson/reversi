@@ -139,7 +139,7 @@ h1{
     }
     .board{
         padding: 2px;
-        border: 15px solid;
+        border: 15px solid darkslategray;
         gap: 2px 2px;
         width: calc(var(--board-size-big) - 2px);
         height: calc(var(--board-size-big) - 2px);

@@ -318,7 +318,7 @@ let corners = (board, color) => {
     let corners = [[0,0],[0,7],[7,0],[7,7]];
 
     for (let corner of corners) {
-        if (board[corner[0]][corner[1]] == black) blackCorners++;\
+        if (board[corner[0]][corner[1]] == black) blackCorners++;
         if (board[corner[0]][corner[1]] == white) whiteCorners++;
     }
 
@@ -531,7 +531,11 @@ const aiTurn = () => {
     // redrawBoard();
 
     if (color == black) {
-        move = monteCarlo2(board, startTime, color, 2000);
+
+        move = monteCarlo(board, startTime, color, 2000);
+
+        // move = randomAI();
+
 
         // [move, score] = minimax(board, depth, -Infinity, Infinity, true);
 
@@ -546,7 +550,9 @@ const aiTurn = () => {
         // move = randomAI();
         // move = evristik(board, color);
 
-        move = monteCarlo2(board, startTime, color, 20000);
+        move = mcts(board, startTime, color, 2000);
+
+        // move = monteCarlo2(board, startTime, color, 2000);
 
 
     }
@@ -625,6 +631,7 @@ const aiTurn = () => {
 
 
         enableTouch();
+
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 aiTurn();
@@ -671,6 +678,177 @@ const humanTurn = (e) => {
     }
 }
 
+setupTree = (board, initialColor) => {
+
+    let revercedColor = initialColor == black ? white : black;
+
+    let tree = {};
+
+    tree.board = board.map(arr => arr.slice());
+    tree.parent = null;
+    tree.color = revercedColor;
+    tree.plays = Number.MIN_VALUE;
+    tree.wins = 0;
+    tree.children = [];
+
+    let moves = shuffle(getValidMoves(board, initialColor));
+
+    for (let move of moves) {
+
+        let tempBoard = board.map(arr => arr.slice());
+
+        let reversedDisks = getFlippedDisks(tempBoard, initialColor, move[0], move[1]);
+        reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = initialColor);
+
+        tree.children.push({});
+
+        tree.children[tree.children.length - 1].board = tempBoard;
+        tree.children[tree.children.length - 1].move = move;
+        tree.children[tree.children.length - 1].parent = tree;
+        tree.children[tree.children.length - 1].color = initialColor;
+        tree.children[tree.children.length - 1].plays = Number.MIN_VALUE;
+        tree.children[tree.children.length - 1].wins = 0;
+        tree.children[tree.children.length - 1].children = [];
+    }
+
+    return tree;
+}
+
+const selection = (tree) => {
+
+    let node = tree;
+
+    while (node.children.length) {
+
+            let maxChild;
+            let maxUCB1 = -Infinity;
+    
+            for (let child of node.children) {
+    
+                let ucb1 = child.wins / child.plays + 1.5 * Math.sqrt(Math.abs(Math.log(child.parent.plays)) / child.plays);
+    
+                if (ucb1 > maxUCB1) [maxChild, maxUCB1] = [child, ucb1];
+            } 
+
+            node = maxChild;
+    }
+
+    return node;
+}
+
+const expansion = (node) => {
+
+    let color = node.color == black ? white : black;
+    let moves = shuffle(getValidMoves(node.board, color));
+
+    if (moves.length == 0) {
+        moves = shuffle(getValidMoves(node.board, node.color));
+        if (moves.length == 0) return node;
+        color = node.color;
+    }
+
+    for (let move of moves) {
+
+        let tempBoard = node.board.map(arr => arr.slice());
+
+        let reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
+        reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+
+        node.children.push({});
+
+        node.children[node.children.length - 1].board = tempBoard;
+        node.children[node.children.length - 1].parent = node;
+        node.children[node.children.length - 1].color = color;
+        node.children[node.children.length - 1].plays = Number.MIN_VALUE;
+        node.children[node.children.length - 1].wins = 0;
+        node.children[node.children.length - 1].children = [];
+    }
+
+    return node.children[0];
+}
+
+const simulation = (node) => {
+
+    let pass = false;
+    let color = node.color == black ? white : black;
+    let tempBoard = node.board.map(arr => arr.slice());
+
+    do {
+
+        let moves = getValidMoves(tempBoard, color);
+
+        // let moves = getValidMove(tempBoard, color);
+
+
+        if (moves.length != 0) {
+            pass = false;
+            let move = moves[Math.floor(Math.random() * moves.length)];
+            // let move = moves;
+
+            reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
+            reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+            color = color == black ? white : black;
+        } 
+        
+        if (moves.length == 0 && !pass){
+            pass = true;
+            color = color == black ? white : black;
+            continue;
+        }
+
+        if (win(tempBoard) || pass) return winner(tempBoard)[0];
+                
+    } while(true);
+
+}
+
+backprapogation = (node, color) => {
+
+    do {
+        node.plays++;
+        if (node.color == color) node.wins++;
+        node = node.parent;
+    } while (node != null)
+} 
+
+const mcts = (board, startTime, initialColor, timeLimit) => {
+
+    if (getValidMoves(board, initialColor).length == 0) return undefined;
+
+    let tree = setupTree(board, initialColor);
+
+    let i = 0;
+
+    do {
+
+        i++;
+
+        let node = selection(tree);
+
+        if (node.plays != 0) node = expansion(node);
+
+        let winner = simulation(node);
+
+        backprapogation(node, winner);
+
+    } while (!timeOver(startTime, timeLimit));
+
+    console.log(i, initialColor);
+
+    let bestMove;
+    let bestValue = -Infinity;
+
+    for (child of tree.children) {
+
+        let value = child.wins / child.plays;
+
+        if (value > bestValue) [bestValue, bestMove] = [value, child.move];
+    }
+
+    return bestMove;
+}
+
+
 const monteCarlo = (board, startTime, initialColor, timeLimit) => {
 
     let move, color, firstMove, tempBoard, reversedDisks, validMoves;
@@ -683,14 +861,14 @@ const monteCarlo = (board, startTime, initialColor, timeLimit) => {
     if (getValidMoves(board, initialColor).length == 0) return undefined;
 
     do {
-        i++
+        i++;
 
         tempBoard = board.map(arr => arr.slice());
         color = initialColor;
         firstMove = null;
         pass = false;
         
-        do{
+        do {
 
             validMoves = getValidMoves(tempBoard, color);
 
@@ -708,13 +886,6 @@ const monteCarlo = (board, startTime, initialColor, timeLimit) => {
 
                 color = color == black ? white : black;
 
-                // let board1 = tempBoard.map(arr => arr.slice());
-
-                // console.log(move[0], move[1], firstMove);
-
-                // console.log(board1);
-
-                // break;
             } 
             
             if (validMoves.length == 0 && !pass){
@@ -726,14 +897,6 @@ const monteCarlo = (board, startTime, initialColor, timeLimit) => {
             }
 
             if (win(tempBoard) || pass) {
-
-                // let board1 = tempBoard.map(arr => arr.slice());
-
-                // console.log(board1);
-
-                // console.log(new Date() - startTime);
-
-                // console.log(winner(tempBoard));
 
                 let result = winner(tempBoard)[0];
 
@@ -1280,7 +1443,7 @@ const init = async() => {
         });
     });
 
-    // setTimeout(enableTouch, 1000);
+    setTimeout(enableTouch, 1000);
 }
 
 window.onload = () => {
