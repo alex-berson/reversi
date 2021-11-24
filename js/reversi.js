@@ -2,16 +2,16 @@ let board = [];
 let empty = 0;
 let black = 1;
 let white = 2;
-let gray = 100;
-let blackDot = -1;
-let whiteDot = -2;
-let pass = false;
+// let gray = 100;
+// let blackDot = -1;
+// let whiteDot = -2;
+// let pass = false;
 let timeLimit = 2000;
  
 let set = 0;
 let statWin = [0,0];
 
-let firstColor = color = white;
+let firstColor = color = black;
 
 const resetBoard = () => board = Array.from(Array(numberOfRows), _ => Array(numberOfColumns).fill(0));
 
@@ -40,6 +40,25 @@ const setBoard = () => {
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0]];
+
+
+    // board = [[1,2,2,2,2,2,2,2],
+    //          [1,2,1,1,2,0,0,0],
+    //          [1,2,1,1,2,0,0,0],
+    //          [1,2,2,2,2,0,0,0],
+    //          [1,2,2,2,2,0,0,0],
+    //          [1,2,2,2,2,0,0,0],
+    //          [1,2,2,1,2,0,0,0],
+    //          [1,1,1,1,1,2,0,0]];
+
+    // board = [[2,1,1,1,1,1,1,1],
+    //          [2,1,2,2,1,0,0,0],
+    //          [2,1,2,2,1,0,0,0],
+    //          [2,1,1,1,1,0,0,0],
+    //          [2,1,1,1,1,0,0,0],
+    //          [2,1,1,1,1,0,0,0],
+    //          [2,1,1,2,1,0,0,0],
+    //          [2,2,2,2,2,1,0,0]];
 }
 
 const validCoords = (r, c) => {
@@ -199,24 +218,24 @@ const makeMove = (board, color, r ,c) => {
 
     flippedDisks.forEach(disk => board[disk[0]][disk[1]] = color);
 
-    // return flippedDisks;
+    return flippedDisks;
 }
 
-const setHints = (moves) => {
-    for (let move of moves) {
-        board[move[0]][move[1]] = gray;
-    }
-} 
+// const setHints = (moves) => {
+//     for (let move of moves) {
+//         board[move[0]][move[1]] = gray;
+//     }
+// } 
 
-const clearHints = () => {
-    for (let r = 0 ; r < 8; r++) {
-        for(let c = 0; c < 8; c++ ) {  
-            if (board[r][c] == gray) board[r][c] = 0;
-            if (board[r][c] == blackDot) board[r][c] = black;
-            if (board[r][c] == whiteDot) board[r][c] = white;
-        }
-    }
-}
+// const clearHints = () => {
+//     for (let r = 0 ; r < 8; r++) {
+//         for(let c = 0; c < 8; c++ ) {  
+//             if (board[r][c] == gray) board[r][c] = 0;
+//             if (board[r][c] == blackDot) board[r][c] = black;
+//             if (board[r][c] == whiteDot) board[r][c] = white;
+//         }
+//     }
+// }
 
 let winner = (board) => {
 
@@ -254,9 +273,9 @@ let full = (board) => {
 
 const init = async() => {
 
-    firstColor = firstColor == black ? white : black;
-
     color = firstColor;
+
+    firstColor = firstColor == black ? white : black;
 
     set++;
 
@@ -269,26 +288,33 @@ const init = async() => {
     // redrawBoard();
 
     setBoardSize();
-    
-    showBoard();
 
     setBoard();
 
-    setHints(getValidMoves(board, color));
+    clearBoard();
+    
+    showBoard();
 
-    redrawBoard();
+    showHints(getValidMoves(board, color));
 
-    clearHints();
+    // showHints(getValidMoves(board, color));
+
+    // setHints(getValidMoves(board, color));
+
+    // redrawBoard();
+
+    // clearHints();
 
     await new Promise(r => setTimeout(r, 1000));
 
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            aiTurn();
-        });
-    });
+    // requestAnimationFrame(() => {
+    //     requestAnimationFrame(() => {
+    //         aiTurn(); //
+    //     });
+    // });
 
     setTimeout(enableTouch, 1000);
+
 }
 
 window.onload = () => {

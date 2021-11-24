@@ -87,27 +87,27 @@ h1{
     background: white;
 }
 
-.black-dot{
+.black-move{
     box-sizing: border-box;
     background: darkred;
     border: calc(var(--hole-size) / 3) solid black;
 
 }
 
-.white-dot{
+.white-move{
     box-sizing: border-box;
     background: darkred;
     border: calc(var(--hole-size) / 3) solid white;
 }
 
-.black-dot{
+.black-move{
     box-sizing: border-box;
     background: black;
     border: 1px solid darkred;
 
 }
 
-.white-dot{
+.white-move{
     box-sizing: border-box;
     background: white;
     border: 1px solid darkred;

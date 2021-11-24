@@ -1,8 +1,8 @@
-const terminalNode = (board) => {
+const terminal = (board) => {
 
     let revercedColor = color == black ? white : black;
     
-    return win(board) || (getValidMoves(board, color) == 0 && getValidMoves(board, revercedColor) == 0);
+    return full(board) || (getValidMoves(board, color) == 0 && getValidMoves(board, revercedColor) == 0);
 }
 
 const minimax = (board, depth, alpha, beta, maximizingPlayer) => {

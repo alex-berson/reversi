@@ -1,4 +1,4 @@
-const nodeSetUp = (node, move, color) => {
+const createNode = (node, move, color) => {
 
     let tempBoard = node.board.map(arr => arr.slice());
 
@@ -20,25 +20,25 @@ const nodeSetUp = (node, move, color) => {
     node.children[n].children = [];
 } 
 
-const setupTree = (board, initialColor) => {
+const createRoot = (board, initialColor) => {
 
     let color = initialColor;
     let revercedColor = initialColor == black ? white : black;
 
-    let tree = {};
+    let root = {};
 
-    tree.board = board.map(arr => arr.slice());
-    tree.parent = null;
-    tree.color = revercedColor;
-    tree.plays = Number.MIN_VALUE;
-    tree.wins = 0;
-    tree.children = [];
+    root.board = board.map(arr => arr.slice());
+    root.parent = null;
+    root.color = revercedColor;
+    root.plays = Number.MIN_VALUE;
+    root.wins = 0;
+    root.children = [];
 
     let moves = shuffle(getValidMoves(board, initialColor));
 
     for (let move of moves) {
 
-        nodeSetUp(tree, move, color);
+        createNode(root, move, color);
 
 
         // let tempBoard = board.map(arr => arr.slice());
@@ -57,7 +57,7 @@ const setupTree = (board, initialColor) => {
         // tree.children[tree.children.length - 1].children = [];
     }
 
-    return tree;
+    return root;
 }
 
 const selection = (tree) => {
@@ -95,7 +95,7 @@ const expansion = (node) => {
 
     for (let move of moves) {
 
-        nodeSetUp(node, move, color);
+        createNode(node, move, color);
 
         // let tempBoard = node.board.map(arr => arr.slice());
 
@@ -115,45 +115,45 @@ const expansion = (node) => {
     return node.children[0];
 }
 
-const simulation = (node) => {
+// const simulation = (node) => {
 
-    let pass = false;
-    let color = node.color == black ? white : black;
-    let tempBoard = node.board.map(arr => arr.slice());
+//     let pass = false;
+//     let color = node.color == black ? white : black;
+//     let tempBoard = node.board.map(arr => arr.slice());
 
-    do {
+//     do {
 
-        // let moves = getValidMoves(tempBoard, color);
+//         // let moves = getValidMoves(tempBoard, color);
 
-        let moves = getValidMove(tempBoard, color);
-
-
-        if (moves.length != 0) {
-            pass = false;
-            // let move = moves[Math.floor(Math.random() * moves.length)];
-            let move = moves;
-
-            makeMove(tempBoard, color, move[0], move[1]);
+//         let moves = getValidMove(tempBoard, color);
 
 
-            // reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
-            // reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+//         if (moves.length != 0) {
+//             pass = false;
+//             // let move = moves[Math.floor(Math.random() * moves.length)];
+//             let move = moves;
 
-            color = color == black ? white : black;
-        } 
+//             makeMove(tempBoard, color, move[0], move[1]);
+
+
+//             // reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
+//             // reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
+
+//             color = color == black ? white : black;
+//         } 
         
-        if (moves.length == 0 && !pass){
-            pass = true;
-            color = color == black ? white : black;
-            continue;
-        }
+//         if (moves.length == 0 && !pass){
+//             pass = true;
+//             color = color == black ? white : black;
+//             continue;
+//         }
 
-        if (full(tempBoard) || pass) return winner(tempBoard)[0];
+//         if (full(tempBoard) || pass) return winner(tempBoard)[0];
                 
-    } while(true);
-}
+//     } while(true);
+// }
 
-const simulation2 = (node) => {
+const simulation = (node) => {
 
     let color = node.color == black ? white : black;
     let tempBoard = node.board.map(arr => arr.slice());
@@ -194,7 +194,7 @@ const mcts = (board, startTime, initialColor, timeLimit) => {
 
     if (getValidMoves(board, initialColor).length == 0) return null;
 
-    let tree = setupTree(board, initialColor);
+    let tree = createRoot(board, initialColor);
 
     let i = 0;
 
@@ -206,7 +206,7 @@ const mcts = (board, startTime, initialColor, timeLimit) => {
 
         if (node.plays != Number.MIN_VALUE) node = expansion(node);
 
-        let winner = simulation2(node);
+        let winner = simulation(node);
 
         backprapogation(node, winner);
 
