@@ -2,7 +2,7 @@ const terminal = (board) => {
 
     let revercedColor = color == black ? white : black;
     
-    return full(board) || (getValidMoves(board, color) == 0 && getValidMoves(board, revercedColor) == 0);
+    return boardFull(board) || (getValidMoves(board, color) == 0 && getValidMoves(board, revercedColor) == 0);
 }
 
 const minimax = (board, depth, alpha, beta, maximizingPlayer) => {

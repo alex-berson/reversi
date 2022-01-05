@@ -45,7 +45,7 @@ const monteCarlo = (board, startTime, initialColor, timeLimit) => {
     
             }
 
-            if (full(tempBoard) || pass) {
+            if (boardFull(tempBoard) || pass) {
 
                 let result = winner(tempBoard)[0];
 

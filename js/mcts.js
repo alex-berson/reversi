@@ -1,4 +1,4 @@
-const createNode = (node, move, color) => {
+const createNode = (node, color, move) => {
 
     let tempBoard = node.board.map(arr => arr.slice());
 
@@ -20,10 +20,10 @@ const createNode = (node, move, color) => {
     node.children[n].children = [];
 } 
 
-const createRoot = (board, initialColor) => {
+const createRoot = (board, color) => {
 
-    let color = initialColor;
-    let revercedColor = initialColor == black ? white : black;
+    // let color = initialColor;
+    let revercedColor = color == black ? white : black;
 
     let root = {};
 
@@ -34,11 +34,11 @@ const createRoot = (board, initialColor) => {
     root.wins = 0;
     root.children = [];
 
-    let moves = shuffle(getValidMoves(board, initialColor));
+    let moves = shuffle(getValidMoves(board, color));
 
     for (let move of moves) {
 
-        createNode(root, move, color);
+        createNode(root, color, move);
 
 
         // let tempBoard = board.map(arr => arr.slice());
@@ -95,7 +95,7 @@ const expansion = (node) => {
 
     for (let move of moves) {
 
-        createNode(node, move, color);
+        createNode(node, color, move);
 
         // let tempBoard = node.board.map(arr => arr.slice());
 
@@ -148,7 +148,7 @@ const expansion = (node) => {
 //             continue;
 //         }
 
-//         if (full(tempBoard) || pass) return winner(tempBoard)[0];
+//         if (boardFull(tempBoard) || pass) return winner(tempBoard)[0];
                 
 //     } while(true);
 // }
@@ -175,7 +175,7 @@ const simulation = (node) => {
 
         color = color == black ? white : black;
                 
-    } while(!full(tempBoard));
+    } while(!boardFull(tempBoard));
 
     return winner(tempBoard)[0];
 }
@@ -190,11 +190,11 @@ const backprapogation = (node, color) => {
     } while (node != null)
 } 
 
-const mcts = (board, startTime, initialColor, timeLimit) => {
+const mcts = (board, color, startTime, timeLimit) => {
 
-    if (getValidMoves(board, initialColor).length == 0) return null;
+    if (getValidMoves(board, color).length == 0) return null;
 
-    let tree = createRoot(board, initialColor);
+    let tree = createRoot(board, color);
 
     let i = 0;
 
@@ -212,7 +212,9 @@ const mcts = (board, startTime, initialColor, timeLimit) => {
 
     } while (!timeOver(startTime, timeLimit));
 
-    console.log(i, initialColor);
+    console.log(i, color);
+
+    // alert(i);
 
     let bestMove;
     let bestValue = -Infinity;

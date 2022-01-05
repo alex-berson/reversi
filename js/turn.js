@@ -2,21 +2,6 @@
 //     board[r][c] *= -1;
 // }
 
-const printBoard = () => {
-
-    let newBoard = board.map(arr => arr.slice());
-        
-    console.log(newBoard);
-}
-
-const printStat = () => {
-
-    if (winner(board)[0] == 1) statWin[0]++;
-    if (winner(board)[0] == 2) statWin[1]++;
-    console.log(winner(board), statWin);
-
-}
-
 // const aiTurn = () => {
 
 //     let move;
@@ -88,7 +73,7 @@ const printStat = () => {
 //     redrawBoard();
 //     clearHints();
 
-//     if (full(board)) {
+//     if (boardFull(board)) {
 //         printStat();
 //         redrawBoard();
 //         setTimeout(init, 2000);
@@ -126,20 +111,18 @@ const printStat = () => {
 //     }
 // }
 
-const aiTurn = () => {
+const aiTurn = (n) => {
 
     let startTime = new Date();
     let move;
-
-    // if (terminal(board)) {
-    //     printStat();
-    //     setTimeout(init, 2000);
-    //     return;
-    // }
+    n = 0;
 
     if (color == black) {
 
-        move = monteCarlo(board, startTime, color, 2000);
+        // move = monteCarlo(board, startTime, color, 2000);
+
+        move = mcts(board, color, startTime, Math.max(500, n * 200 + 400 + 1000));
+
 
         // move = randomAI();
 
@@ -153,9 +136,9 @@ const aiTurn = () => {
         // move = randomAI();
         // move = evristik(board, color);
 
-        move = mcts(board, startTime, color, 2000);
+        move = mcts(board, color, startTime, Math.max(500, n * 200 + 400 + 1000));
 
-        // move = monteCarlo2(board, startTime, color, 1000);
+        // move = monteCarlo2(board, startTime, color, 2000);
 
     }
 
@@ -166,70 +149,70 @@ const aiTurn = () => {
         if (getValidMoves(board, color).length == 0) {
             console.log("PASS: ", color);
             printStat();
-            // setTimeout(init, 2000);  //
+            setTimeout(gameOver, 1000);
+            // setTimeout(rePlay, Math.max(2000, n * 200 + 400 + 2000));  //
             return;
         }
 
-        // showHints(getValidMoves(board, color));
+        showHints(getValidMoves(board, color)); //
 
-        // setHints(getValidMoves(board, color));
-        // redrawBoard();
+        setTimeout(enableTouch, 0);
 
-        showHints(getValidMoves(board, color));
-
-        enableTouch();
-
-        // requestAnimationFrame(() => {
-        //     requestAnimationFrame(() => {
-        //         setTimeout(aiTurn, 0); //
-        //     });
-        // });  
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                // setTimeout(aiTurn, 100, 0); //
+            });
+        });  
 
         return;
     }
 
     let disks = makeMove(board, color, move[0], move[1]);
 
-    flipDisks(disks);
+    setTimeout(flipDisks, 0, disks, color);
+
+    // flipDisks(disks);
 
     printBoard();
-    reverseColor();
-
-    // setHints(getValidMoves(board, color));
-    // showMove(move[0], move[1]);
-    // redrawBoard();
-    // clearHints();
+    reverseColor();;
 
     if (getValidMoves(board, color).length == 0) {
         console.log("PASS: ", color);
         reverseColor();
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                setTimeout(aiTurn, 0);
+                setTimeout(aiTurn, 100, distance(disks));
             });
         }); 
         return;
     }
 
-    showHints(getValidMoves(board, color));
+    // let validMoves = getValidMoves(board, color);
 
-    enableTouch();
+    setTimeout(() => {
+        showHints(getValidMoves(board, color)); //
+        enableTouch();
+    // }, 400 + distance(disks) * 200 + 100);
+    }, 1000);
 
-    // requestAnimationFrame(() => {
-    //     requestAnimationFrame(() => {
-    //         setTimeout(aiTurn, 0); //
-    //     });
-    // });  
+
+    // setTimeout(showHints, 2000, validMoves);
+
+    // showHints(getValidMoves(board, color));
+
+    // setTimeout(enableTouch, 0);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            // setTimeout(aiTurn, 100, distance(disks)); //
+        });
+    });  
 }
 
 const humanTurn = (e) => {  
 
-    console.log("TOUCH");
-    
     let square = e.currentTarget;
     let [r, c] = squareCoords(square);
-
-    // clearHints();
 
     if (!validMove(board, color, r, c)) return;
 
@@ -239,25 +222,21 @@ const humanTurn = (e) => {
 
     let disks = makeMove(board, color, r, c);
 
-    flipDisks(disks);
-
-    // showMove(r, c);
+    flipDisks(disks, color);
 
     printBoard();
-
-    // redrawBoard();
-
-    // clearHints();
 
     reverseColor();
 
     if (terminal(board)) {
         console.log(winner(board))
-        // redrawBoard();
+        printStat();
+        setTimeout(gameOver, 1000);
     } else {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                setTimeout(aiTurn, 100);
+                setTimeout(aiTurn, 0, distance(disks));
+                // aiTurn();
             });
         });  
     }

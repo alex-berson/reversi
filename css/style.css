@@ -12,6 +12,9 @@
 :root {
     --board-size: 0.85;
     --hole-size: calc(var(--board-size) / 8 / 1.2);
+    /* --green: #214f11; */
+    --green: #3a8664;
+    --half: 50%;
 }
 
 body{
@@ -64,8 +67,8 @@ h1{
     display: grid;
     justify-content: center;
     align-content: center;
-    background: #214f11;
-    filter: brightness(150%);
+    background: var(--green);
+    /* filter: brightness(150%); */
 }
 
 .square:hover{
@@ -73,34 +76,166 @@ h1{
 }  
 
 .disk{
-    background: #214f11;
+    background:  var(--green);
     height: var(--hole-size);
     width: var(--hole-size);
     border-radius: 50%;
+    opacity: 0;
+
+    /* transition: opacity 0.8s linear; */
 }
 
-.black{
+@keyframes dis {
+    33% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis1 {
+    33% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis2 {
+    50% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis3 {
+    60% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis4 {
+    67% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis5 {
+    71% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis6 {
+    75% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis7 {
+    78% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis8 {
+    80% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis9 {
+    82% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+@keyframes dis10 {
+    83% {
+        filter: invert(0);
+    }
+    100% {
+        filter: invert(100%);    
+    }
+}
+
+/* .disappear {
+    animation: dis 1.5s 1 linear forwards;
+}
+
+.disappear2 {
+    animation: dis 1.5s 1 linear forwards;
+} */
+
+ .black{
     background: black;
+    /* opacity: 0; */
 }
 
 .white{
     background: white;
+    /* opacity: 0; */
 }
 
 .black-move{
     box-sizing: border-box;
-    background: darkred;
-    border: calc(var(--hole-size) / 3) solid black;
+    background:  var(--green);
+    /* background:  darkslategray; */
+
+    /* background:  white; */
+    /* border: calc(var(--hole-size) / 2.5) solid black; */
+
+    border: calc(var(--hole-size) / 2.2) solid black;
+
+    border: calc(var(--hole-size) / 2) solid black;
+
+
 
 }
 
 .white-move{
     box-sizing: border-box;
-    background: darkred;
-    border: calc(var(--hole-size) / 3) solid white;
+    /* background: var(--green); */
+    background:  darkslategray;
+
+    /* background:  black; */
+
+    /* border: calc(var(--hole-size) / 2.5) solid white; */
+
+    border: calc(var(--hole-size) / 2.2) solid white;
+
+    border: calc(var(--hole-size) / 2) solid white;
+
+
+    transition: background-color 1s linear;
 }
 
-.black-move{
+/* .black-move{
     box-sizing: border-box;
     background: black;
     border: 1px solid darkred;
@@ -111,7 +246,7 @@ h1{
     box-sizing: border-box;
     background: white;
     border: 1px solid darkred;
-}
+} */
 
 /* .gray{
     background: gray;
@@ -121,8 +256,32 @@ h1{
 
 .gray{
     box-sizing: border-box;
-    background:  gray;
-    border: calc(var(--hole-size) / 3) solid #214f11;
+    background: darkslategray;
+    /* background: black; */
+
+    border: calc(var(--hole-size) / 2.5) solid  var(--green);
+    transition: opacity 0.4s linear;
+    opacity: 1;
+}
+
+.gray-b{
+    box-sizing: border-box;
+    background: darkslategray;
+    /* background: black; */
+
+    border: calc(var(--hole-size) / 2.5) solid var(--green);
+    transition: opacity 0.4s linear;
+    opacity: 1;
+}
+
+.gray-w{
+    box-sizing: border-box;
+    background: silver;
+    /* background: black; */
+
+    border: calc(var(--hole-size) / 2.5) solid var(--green);
+    transition: opacity 0.4s linear;
+    opacity: 1;
 }
 
 
@@ -158,8 +317,21 @@ h1{
     }
 
     .gray{
-        border: calc(var(--hole-size-big) / 3) solid #214f11;
+        border: calc(var(--hole-size-big) / 2.5) solid  var(--green);
     }
+
+    .gray-b, .gray-w {
+        border: calc(var(--hole-size-big) / 2.5) solid  var(--green);
+    }
+
+    .black-move{
+        border: calc(var(--hole-size-big) / 2) solid black;
+    }
+    
+    .white-move{
+        border: calc(var(--hole-size-big) / 2) solid white;
+    }
+    
 
     #designed{
         font-size: 0.75em; 
