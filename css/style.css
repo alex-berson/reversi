@@ -195,10 +195,14 @@ h1{
  .black{
     background: black;
     /* opacity: 0; */
+    transition: opacity 0.6s linear;
+
 }
 
 .white{
     background: white;
+    transition: opacity 0.6s linear;
+
     /* opacity: 0; */
 }
 
@@ -270,17 +274,17 @@ h1{
     /* background: black; */
 
     border: calc(var(--hole-size) / 2.5) solid var(--green);
-    transition: opacity 0.4s linear;
+    transition: opacity 0.5s linear;
     opacity: 1;
 }
 
 .gray-w{
     box-sizing: border-box;
     background: silver;
-    /* background: black; */
+    /* background: white; */
 
     border: calc(var(--hole-size) / 2.5) solid var(--green);
-    transition: opacity 0.4s linear;
+    transition: opacity 0.5s linear;
     opacity: 1;
 }
 

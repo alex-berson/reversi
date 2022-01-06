@@ -35,17 +35,41 @@ const clearBoard = () => {
 
     for (let i = 0 ; i < 64; i++) {
         disks[i].classList.remove("black", "white", "black-move", "white-move");
+        disks[i].style = '';
+
     }
+
+    // disks[27].classList.add("white");
+    // disks[28].classList.add("black");
+    // disks[35].classList.add("black");
+    // disks[36].classList.add("white");
+
+    // disks[27].style.opacity = 1;
+    // disks[28].style.opacity = 1;
+    // disks[35].style.opacity = 1;
+    // disks[36].style.opacity = 1;
+}
+
+const initialDisksPlacement= () => {
+
+    let disks = document.querySelectorAll('.disk');
 
     disks[27].classList.add("white");
     disks[28].classList.add("black");
     disks[35].classList.add("black");
     disks[36].classList.add("white");
 
-    disks[27].style.opacity = 1;
-    disks[28].style.opacity = 1;
-    disks[35].style.opacity = 1;
-    disks[36].style.opacity = 1;
+
+    setTimeout(() => {disks[27].style.opacity = 1}, 0);
+    setTimeout(() => {disks[36].style.opacity = 1}, 600);
+    setTimeout(() => {disks[28].style.opacity = 1}, 1200);
+    setTimeout(() => {disks[35].style.opacity = 1}, 1800);
+
+    // disks[27].style.opacity = 1;
+    // disks[28].style.opacity = 1;
+    // disks[35].style.opacity = 1;
+    // disks[36].style.opacity = 1;
+
 
 }
 

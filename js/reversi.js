@@ -330,13 +330,17 @@ const newGame = () => {
 
     color = black;
 
-    clearBoard();
-
     setBoard();
 
+    clearBoard();
+
+    setTimeout(initialDisksPlacement, 1000);
+
     if (firstColor == black) {
-        showHints(getValidMoves(board, color));
-        enableTouch();
+        setTimeout(() => {
+            showHints(getValidMoves(board, color));
+            enableTouch();
+        }, 3400);
         return;
     }   
 
@@ -346,7 +350,7 @@ const newGame = () => {
                 aiTurn(0); //
             });
         });
-    }, 0);
+    }, 2900);
 }
 
 const rePlay = () => {
@@ -363,8 +367,10 @@ const rePlay = () => {
     clearBoard();
 
     setBoard();
+
+    setTimeout(initialDisksPlacement, 1000);
     
-    showHints(getValidMoves(board, color));
+    // showHints(getValidMoves(board, color));
 
     setTimeout(() => {
         requestAnimationFrame(() => {
@@ -372,7 +378,7 @@ const rePlay = () => {
                 aiTurn(0); //
             });
         });
-    }, 1000);
+    }, 2900);
 }
 
 const init = () => {
@@ -390,7 +396,9 @@ const init = () => {
     
     showBoard();
 
-    showHints(getValidMoves(board, color));
+    setTimeout(initialDisksPlacement, 1000)
+
+    setTimeout(() => showHints(getValidMoves(board, color)), 1000 + 2400);
 
     setTimeout(() => {
         requestAnimationFrame(() => {
