@@ -33,11 +33,23 @@ const clearBoard = () => {
 
     let disks = document.querySelectorAll('.disk');
 
-    for (let i = 0 ; i < 64; i++) {
-        disks[i].classList.remove("black", "white", "black-move", "white-move");
-        disks[i].style = '';
+    document.querySelector("#designed").style.opacity = 1;
 
+    for (let i = 0 ; i < 64; i++) {
+        disks[i].style = '';
+        // disks[i].style.opacity = 0
+        // disks[i].classList.remove("black", "white", "black-move", "white-move");
     }
+
+    setTimeout(() => {
+
+        let disks = document.querySelectorAll('.disk');
+
+        for (let i = 0 ; i < 64; i++) {
+            disks[i].classList.remove("black", "white", "black-move", "white-move");
+            disks[i].innerText = '';
+        }
+    }, 600);
 
     // disks[27].classList.add("white");
     // disks[28].classList.add("black");
@@ -50,7 +62,7 @@ const clearBoard = () => {
     // disks[36].style.opacity = 1;
 }
 
-const initialDisksPlacement= () => {
+const initialDisksPlacement = () => {
 
     let disks = document.querySelectorAll('.disk');
 
@@ -59,20 +71,197 @@ const initialDisksPlacement= () => {
     disks[35].classList.add("black");
     disks[36].classList.add("white");
 
-
     setTimeout(() => {disks[27].style.opacity = 1}, 0);
-    setTimeout(() => {disks[36].style.opacity = 1}, 600);
-    setTimeout(() => {disks[28].style.opacity = 1}, 1200);
-    setTimeout(() => {disks[35].style.opacity = 1}, 1800);
+    setTimeout(() => {disks[28].style.opacity = 1}, 600);
+    setTimeout(() => {disks[35].style.opacity = 1}, 1200);
+    setTimeout(() => {disks[36].style.opacity = 1}, 1800);
+}
 
-    // disks[27].style.opacity = 1;
-    // disks[28].style.opacity = 1;
-    // disks[35].style.opacity = 1;
-    // disks[36].style.opacity = 1;
+const initialDisksPlacement2 = () => {
 
+    let disks = document.querySelectorAll('.disk');
+
+    for (let i = 0 ; i < 64; i++) {
+
+        if (board[Math.floor(i / 8)][i % 8] == 1) {
+            disks[i].style.opacity = 1
+            disks[i].classList.add("black");
+        } 
+
+        if (board[Math.floor(i / 8)][i % 8] == 2) {
+            disks[i].style.opacity = 1
+            disks[i].classList.add("white");
+        } 
+    }
+}
+
+const showWinner = () => {
+
+    let color = winner(board)[0];
+
+    let disks = document.querySelectorAll('.disk');
+
+    let i = -1;
+    let blacks = 0;
+    let whites = 0;
+    let countInterval;
+
+    const countDisks = () => {
+
+        do {
+
+            i++;
+
+            if (i > 63) {clearInterval(countInterval); break}
+
+            if (board[Math.floor(i / 8)][i % 8] == white) {
+                whites++;
+                disks[i].innerText = whites;
+                break;
+            }
+
+            if (board[Math.floor(i / 8)][i % 8] == black) {
+                blacks++;
+                disks[i].innerText = blacks;
+                break;
+            }
+
+        } while (true);
+    }
+
+    for (let i = 0 ; i < 64; i++) {
+        // if (board[Math.floor(i / 8)][i % 8] == color ||
+        //     board[Math.floor(i / 8)][i % 8] && !color) {
+        //         disks[i].style.transition = `opacity 0.25s linear`;
+        //     }
+
+        // if (board[Math.floor(i / 8)][i % 8] == 3 - color && color) {
+        //     disks[i].style.transition = `opacity 0.5s linear`;
+        // }
+        disks[i].style.transition = `opacity 0.25s linear`;
+    }
+
+    setTimeout(() => {
+        for (let i = 0 ; i < 64; i++) {
+            if (board[Math.floor(i / 8)][i % 8] == color ||
+                board[Math.floor(i / 8)][i % 8] && !color) {
+                disks[i].style.opacity = 0;
+            }
+
+            if (board[Math.floor(i / 8)][i % 8] == 3 - color && color) {
+                disks[i].style.opacity = 0.5;
+            }
+        }
+    }, 0)
+
+    // setTimeout(() => {
+    //     for (let i = 0 ; i < 64; i++) {
+    //         if (board[Math.floor(i / 8)][i % 8] == color ||
+    //             board[Math.floor(i / 8)][i % 8] && !color) {
+    //             disks[i].style.opacity = 1;
+    //         }
+    //     }
+    // }, 500);
+
+    // setTimeout(() => {
+    //     for (let i = 0 ; i < 64; i++) {
+    //         if (board[Math.floor(i / 8)][i % 8] == color ||
+    //             board[Math.floor(i / 8)][i % 8] && !color) {
+    //             disks[i].style.opacity = 0;
+    //         }
+    //     }
+    // }, 1000)
+
+    setTimeout(() => {
+        for (let i = 0 ; i < 64; i++) {
+            if (board[Math.floor(i / 8)][i % 8] == color ||
+                board[Math.floor(i / 8)][i % 8] && !color) {
+                disks[i].style.opacity = 1;
+            }
+        }
+    }, 500);
+
+    setTimeout(() => {
+        for (let i = 0 ; i < 64; i++) {
+            if (board[Math.floor(i / 8)][i % 8] == color ||
+                board[Math.floor(i / 8)][i % 8] && !color) {
+                disks[i].style.opacity = 0;
+            }
+        }
+    }, 1000)
+
+    setTimeout(() => {
+        for (let i = 0 ; i < 64; i++) {
+            if (board[Math.floor(i / 8)][i % 8] == color ||
+                board[Math.floor(i / 8)][i % 8] && !color) {
+                disks[i].style.opacity = 1;
+            }
+
+            if (board[Math.floor(i / 8)][i % 8] == 3 - color && color) {
+                disks[i].style.opacity = 1;
+            }
+
+        }
+    }, 1500);
+
+
+
+    setTimeout(() => {
+
+        countInterval = setInterval(countDisks, 50);
+
+    }, 2000)
+
+
+
+
+    
+    // setTimeout(() => {
+
+    //     for (let i = 0 ; i < 64; i++) {
+    //         disks[i].style.transition = `opacity 0.5s ease-in-out`;
+    //     }
+
+    //     for (let i = 0 ; i < 64; i++) {
+    //         if (board[Math.floor(i / 8)][i % 8] == color ||
+    //             board[Math.floor(i / 8)][i % 8] == 3 - color) {
+    //             disks[i].style.opacity = 0.5;
+    //         }
+
+    //         document.querySelector("#designed").style.opacity = 0.5;
+    //     }
+    // }, 2000);
 
 }
 
+const showWinner2 = () => {
+
+    let color = winner(board)[0];
+
+    let disks = document.querySelectorAll('.disk');
+
+    for (let i = 0 ; i < 64; i++) {
+        disks[i].style.transition = `opacity 0.5s ease-in-out`;
+    }
+
+    setTimeout(() => {
+        for (let i = 0 ; i < 64; i++) {
+            if (board[Math.floor(i / 8)][i % 8] == 3 - color ||
+                board[Math.floor(i / 8)][i % 8] && !color) {
+                disks[i].style.opacity = 0.2;
+            }
+        }
+    }, 0)
+
+    setTimeout(() => {
+        for (let i = 0 ; i < 64; i++) {
+            if (board[Math.floor(i / 8)][i % 8] == 3 - color ||
+                board[Math.floor(i / 8)][i % 8] && !color) {
+                disks[i].style.opacity = 1;
+            }
+        }
+    }, 2000);
+}
 
 const showHints = (moves) => {
 
@@ -143,7 +332,7 @@ const flipDisks = async(flippedDisks, color) => {
 
     hideHints();
 
-    hideMove();
+    // hideMove();
 
     // await new Promise(r => setTimeout(r, 100));
 
@@ -158,7 +347,8 @@ const flipDisks = async(flippedDisks, color) => {
 
     // disks[flippedDisks[0][0] * 8 + flippedDisks[0][1]].style.background = "white";
 
-    color == black ? disks[r * 8 + c].classList.add("black", "black-move") : disks[r * 8 + c].classList.add("white",  "white-move");
+    // color == black ? disks[r * 8 + c].classList.add("black", "black-move") : disks[r * 8 + c].classList.add("white",  "white-move");
+    color == black ? disks[r * 8 + c].classList.add("black") : disks[r * 8 + c].classList.add("white");
 
     disks[r * 8 + c].style.transition = `opacity 0.6s linear`;;
 

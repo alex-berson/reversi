@@ -89,6 +89,18 @@ const setBoard = () => {
     //          [2,2,2,2,2,1,1,1]];
 }
 
+const setBoard2 = () => {
+
+    board = [[2,1,1,1,1,1,1,1],
+             [2,1,2,2,1,1,2,0],
+             [2,1,2,2,1,2,2,0],
+             [2,1,1,1,1,1,2,2],
+             [2,1,1,1,1,2,1,2],
+             [2,1,1,1,1,1,2,1],
+             [2,1,1,2,1,1,2,2],
+             [2,2,2,2,2,1,1,1]];
+}
+
 const validCoords = (r, c) => {
 
     if (r < 0 || r > 7 || c < 0 || c > 7) return false;
@@ -311,11 +323,16 @@ let boardFull = (board) => {
 } 
 
 const gameOver = () => {
-    if (touchScreen()){
-        document.addEventListener("touchstart", newGame);
-    } else {
-        document.addEventListener("mousedown", newGame);
-    }
+
+    setTimeout(showWinner, 500);
+
+    setTimeout(() => {
+        if (touchScreen()){
+            document.addEventListener("touchstart", newGame);
+        } else {
+            document.addEventListener("mousedown", newGame);
+        }
+    }, 500 + 500 * 4);
 }
 
 const newGame = () => {
@@ -334,13 +351,13 @@ const newGame = () => {
 
     clearBoard();
 
-    setTimeout(initialDisksPlacement, 1000);
+    setTimeout(initialDisksPlacement, 1500);
 
     if (firstColor == black) {
         setTimeout(() => {
             showHints(getValidMoves(board, color));
-            enableTouch();
-        }, 3400);
+            setTimeout(enableTouch, 500);
+        }, 1500 + 2400);
         return;
     }   
 
@@ -350,7 +367,7 @@ const newGame = () => {
                 aiTurn(0); //
             });
         });
-    }, 2900);
+    }, 1500 + 2400 - 500);
 }
 
 const rePlay = () => {
@@ -378,7 +395,7 @@ const rePlay = () => {
                 aiTurn(0); //
             });
         });
-    }, 2900);
+    }, 1500 + 2400 - 500);
 }
 
 const init = () => {
@@ -392,11 +409,13 @@ const init = () => {
 
     setBoard();
 
+    // setBoard2();
     clearBoard();
     
     showBoard();
 
     setTimeout(initialDisksPlacement, 1000)
+    // setTimeout(initialDisksPlacement2, 1000)
 
     setTimeout(() => showHints(getValidMoves(board, color)), 1000 + 2400);
 
@@ -408,7 +427,7 @@ const init = () => {
         });
     }, 1000);
 
-    setTimeout(enableTouch, 1000);
+    setTimeout(enableTouch, 1000 + 2400 + 500);
 }
 
 window.onload = () => {
