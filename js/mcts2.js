@@ -133,22 +133,26 @@ const simulation2 = (node) => {
 
     do {
 
-        let moves = getValidMoves(tempBoard, color);
+        // let moves = getValidMoves(tempBoard, color);
 
-        // let moves = getValidMove(tempBoard, color);
+        let moves = getValidMove(tempBoard, color);
 
 
-        if (moves.length != 0) {
+        // if (moves.length != 0) {
+        if (moves != null) {
+
             pass = false;
-            let move = moves[Math.floor(Math.random() * moves.length)];
-            // let move = moves;
+            // let move = moves[Math.floor(Math.random() * moves.length)];
+            let move = moves;
 
             reversedDisks = getFlippedDisks(tempBoard, color, move[0], move[1]);
             reversedDisks.forEach(disk => tempBoard[disk[0]][disk[1]] = color);
             color = color == black ? white : black;
         } 
         
-        if (moves.length == 0 && !pass){
+        // if (moves.length == 0 && !pass){
+        if (moves == null && !pass){
+
             pass = true;
             color = color == black ? white : black;
             continue;
@@ -169,7 +173,7 @@ backprapogation2 = (node, color) => {
     } while (node != null)
 } 
 
-const mcts2 = (board, startTime, initialColor, timeLimit) => {
+const mcts2 = (board, initialColor, startTime, timeLimit) => {
 
     if (getValidMoves(board, initialColor).length == 0) return undefined;
 

@@ -111,17 +111,43 @@
 //     }
 // }
 
+const checkMove = () => {
+
+    let disks = document.querySelectorAll('.disk');
+
+    for (let i = 0; i < 64; i++) {
+
+        if (disks[i].classList.contains("black") && board[Math.floor(i / 8)][i % 8] != 1) {
+
+            console.log(Math.floor(i / 8), i % 8);
+
+            return true;
+        };
+
+        if (disks[i].classList.contains("white") && board[Math.floor(i / 8)][i % 8] != 2) {
+
+            console.log(Math.floor(i / 8), i % 8);
+            
+            return true;
+        }
+
+    }
+    return false;
+}
+
 const aiTurn = (n) => {
 
     let startTime = new Date();
     let move;
     n = 0;
 
+    let depth = 6;
+
     if (color == black) {
 
         // move = monteCarlo(board, startTime, color, 2000);
 
-        move = mcts(board, color, startTime, Math.max(500, n * 200 + 400 + 1000));
+        move = mcts(board, color, startTime, Math.max(1500, n * 200 + 400 + 1000));
 
 
         // move = randomAI();
@@ -133,14 +159,17 @@ const aiTurn = (n) => {
         // console.log(move);
 
     } else {
+
         // move = randomAI();
         // move = evristik(board, color);
 
-        move = mcts(board, color, startTime, Math.max(500, n * 200 + 400 + 1000));
+        move = mcts(board, color, startTime, Math.max(1500, n * 200 + 400 + 1000));
 
-        // move = monteCarlo2(board, startTime, color, 2000);
+        // move = monteCarlo2(board, color, startTime, 1500);
 
     }
+
+    // if (checkMove()) return;
 
     if (move == null) {
         console.log("PASS: ", color);
@@ -167,9 +196,10 @@ const aiTurn = (n) => {
         return;
     }
 
+
     let disks = makeMove(board, color, move[0], move[1]);
 
-    setTimeout(flipDisks, 0, disks, color);
+    setTimeout(flipDisks, 50, disks, color);
 
     // flipDisks(disks);
 
@@ -193,7 +223,7 @@ const aiTurn = (n) => {
         showHints(getValidMoves(board, color)); //
         enableTouch();
     // }, 400 + distance(disks) * 200 + 100);
-    }, 1000);
+    }, 1000 + 100);
 
 
     // setTimeout(showHints, 2000, validMoves);
@@ -236,7 +266,6 @@ const humanTurn = (e) => {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 setTimeout(aiTurn, 0, distance(disks));
-                // aiTurn();
             });
         });  
     }

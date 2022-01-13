@@ -86,7 +86,7 @@ const monteCarlo = (board, startTime, initialColor, timeLimit) => {
     return [Math.floor(bestSquare / 8), bestSquare % 8];
 }
 
-const monteCarlo2 = (board, startTime, initialColor, timeLimit) => {
+const monteCarlo2 = (board, initialColor, startTime, timeLimit) => {
 
     let move, color, firstMove, tempBoard, reversedDisks, validMoves;
     let bestSquare, bestValue;
@@ -109,7 +109,7 @@ const monteCarlo2 = (board, startTime, initialColor, timeLimit) => {
 
             move = getValidMove(tempBoard, color);
 
-            if (move.length != 0) {
+            if (move != null) {
 
                 pass = false;
 
@@ -130,7 +130,7 @@ const monteCarlo2 = (board, startTime, initialColor, timeLimit) => {
                 // break;
             } 
             
-            if (move.length == 0 && !pass){
+            if (move == null && !pass){
 
                 pass = true;
                 color = color == black ? white : black;

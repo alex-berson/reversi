@@ -1,10 +1,3 @@
-const terminal = (board) => {
-
-    let revercedColor = color == black ? white : black;
-    
-    return boardFull(board) || (getValidMoves(board, color) == 0 && getValidMoves(board, revercedColor) == 0);
-}
-
 const minimax = (board, depth, alpha, beta, maximizingPlayer) => {
 
     let tempBoard;
@@ -17,7 +10,16 @@ const minimax = (board, depth, alpha, beta, maximizingPlayer) => {
 
     // let opponent = maximizingPlayer ? false : true;
 
-    if (depth == 0 || win(board) || (validMoves.length == 0 && validMovesOpponent.length == 0)) return [null, evaluation(board, color)];
+    if ((validMoves.length == 0 && validMovesOpponent.length == 0)) {
+
+        if (winner(board)[0] == color) return [null, 10000000];
+        
+        if (winner(board)[0] == revercedColor) return [null, -10000000];
+
+        return [null, 0];
+    }
+
+    if (depth == 0) return [null, evaluation(board, color)];
 
     // if (timeOut(startTime)) return [null, null];
     // if (initialColumnes != null) validMoves = [...new Set([...initialColumnes, ...validMoves])];

@@ -13,6 +13,18 @@ let statWin = [0,0];
 
 let firstColor = color = black;
 
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+            .then(reg => {
+                console.log('Service worker registered!', reg);
+            })
+            .catch(err => {
+                console.log('Service worker registration failed: ', err);
+            });
+    });
+} 
+
 const resetBoard = () => board = Array.from(Array(numberOfRows), _ => Array(numberOfColumns).fill(0));
 
 const timeOver = (startTime, timeLimit) => new Date() - startTime >= timeLimit;
@@ -288,6 +300,13 @@ const distance = (disks) => {
 //     }
 // }
 
+const terminal = (board) => {
+
+    let revercedColor = color == black ? white : black;
+    
+    return boardFull(board) || (getValidMoves(board, color) == 0 && getValidMoves(board, revercedColor) == 0);
+}
+
 let winner = (board) => {
 
     let whites = 0;
@@ -328,19 +347,21 @@ const gameOver = () => {
 
     setTimeout(() => {
         if (touchScreen()){
-            document.addEventListener("touchstart", newGame);
+            document.querySelector('.board').addEventListener("touchstart", newGame);
         } else {
-            document.addEventListener("mousedown", newGame);
+            document.querySelector('.board').addEventListener("mousedown", newGame);
         }
-    }, 500 + 500 * 4);
+    }, 500 + 500 * 4 + 50 * (winner(board)[1] + winner(board)[2]));
+
+    setTimeout(rePlay, 500 + 500 * 4 + 50 * (winner(board)[1] + winner(board)[2]) + 100); //
 }
 
 const newGame = () => {
 
     if (touchScreen()){
-        document.removeEventListener("touchstart", newGame);
+        document.querySelector('.board').removeEventListener("touchstart", newGame);
     } else {
-        document.removeEventListener("mousedown", newGame);
+        document.querySelector('.board').removeEventListener("mousedown", newGame);
     }
 
     firstColor = firstColor == black ? white : black;
@@ -372,7 +393,11 @@ const newGame = () => {
 
 const rePlay = () => {
 
-    document.removeEventListener("touchstart", rePlay);
+    if (touchScreen()){
+        document.querySelector('.board').removeEventListener("touchstart", newGame);
+    } else {
+        document.querySelector('.board').removeEventListener("mousedown", newGame);
+    }
 
     firstColor = firstColor == black ? white : black;
 
@@ -385,7 +410,7 @@ const rePlay = () => {
 
     setBoard();
 
-    setTimeout(initialDisksPlacement, 1000);
+    setTimeout(initialDisksPlacement, 1500);
     
     // showHints(getValidMoves(board, color));
 
@@ -409,15 +434,15 @@ const init = () => {
 
     setBoard();
 
-    // setBoard2();
     clearBoard();
+    // setBoard2();
     
     showBoard();
 
     setTimeout(initialDisksPlacement, 1000)
     // setTimeout(initialDisksPlacement2, 1000)
 
-    setTimeout(() => showHints(getValidMoves(board, color)), 1000 + 2400);
+    setTimeout(() => showHints(getValidMoves(board, color)), 1000 + 4 * 600);
 
     setTimeout(() => {
         requestAnimationFrame(() => {
@@ -425,9 +450,9 @@ const init = () => {
                 // aiTurn(0); //
             });
         });
-    }, 1000);
+    }, 1000 + 4 * 600);
 
-    setTimeout(enableTouch, 1000 + 2400 + 500);
+    setTimeout(enableTouch, 1000 + 4 * 600 + 500);
 }
 
 window.onload = () => {

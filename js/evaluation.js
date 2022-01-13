@@ -231,7 +231,7 @@ const evaluation = (board, color) => {
     score = 25 * difference(board, color) + 30 * corners(board, color) + 5 * mobility(board, color) + 5 * potentialMobility(board, color) + 25 * stability(board, color);
 
 
-
+    // score = difference(board, color);
     // score = matrixEval(board, color);
 
 

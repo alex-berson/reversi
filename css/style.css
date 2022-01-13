@@ -1,11 +1,11 @@
 @font-face {
-    font-family: 'Roboto Slab';
-    src: url(../fonts/Roboto-Regular-webfont.woff2);
+    font-family: 'Roboto';
+    src: url(../fonts/roboto-regular-webfont.woff);
 }
 
 @font-face {
-    font-family: 'Roboto Slab';
-    src: url(../fonts/Roboto-Bold-webfont.woff2);
+    font-family: 'Roboto';
+    src: url(../fonts/roboto-bold-webfont.woff);
     font-weight: bold;
 }
 
@@ -18,7 +18,7 @@
 }
 
 body{
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Roboto', serif;
     margin: 0px;
     transition: opacity 2s ease;
     opacity: 0;
@@ -302,9 +302,20 @@ h1{
     text-align: center;
     align-self: auto;
     color: white;
-    font-size: 0.43em; 
+    font-size: 0.60em; 
     margin-top: -1.3em;
     transition: opacity 0.5s linear;
+}
+
+@media (orientation: landscape) and (max-height: 460px){
+
+    h1{
+        display: none;
+    }
+
+    .board{
+        margin-top: 20px;
+    }
 }
 
 @media (min-width: 460px) and (min-height: 460px){
@@ -346,7 +357,6 @@ h1{
         border: calc(var(--hole-size-big) / 2) solid white;
     }
     
-
     #designed{
         font-size: 0.75em; 
         margin-top: -1.35em;
