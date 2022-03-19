@@ -6,12 +6,16 @@ let white = 2;
 // let blackDot = -1;
 // let whiteDot = -2;
 // let pass = false;
-let timeLimit = 2000;
+let timeLimit = 1500;
  
-let set = 0;
-let statWin = [0,0];
+let set = 0;            //
+let statWin = [0,0];    //
+let moves = [];         //
 
-let firstColor = color = black;
+let moves2 = 
+[19, 20, 21, 18, 17, 43, 45, 37, 46, 12, 5, 16, 29, 38, 13, 14, 30, 53, 7, 47, 42, 39, 61, 60, 31, 23, 50, 52, 59, 51, 34, 44, 11, 41, 33, 58, 57, 24, 62, 2, 40, 6, 25, 10, 26, 32, 3, 22, 1, 48, 8, 0, 9, 54, 63, 55, 15, 4, 49, 56]
+
+let playerColor = color = black;
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -25,15 +29,13 @@ if ('serviceWorker' in navigator) {
     });
 } 
 
-const resetBoard = () => board = Array.from(Array(numberOfRows), _ => Array(numberOfColumns).fill(0));
+const resetBoard = () => board = Array.from(Array(8), _ => Array(8).fill(0));
 
 const timeOver = (startTime, timeLimit) => new Date() - startTime >= timeLimit;
 
-// const pause = (m) => await new Promise(r => setTimeout(r, m));
-
 const reverseColor = () => color = color == black ? white : black;
 
-const shuffle = ([...array]) => {
+const shuffle = (array) => {
 
     for (let i = array.length - 1; i > 0; i--) {
 
@@ -49,14 +51,14 @@ const printBoard = () => {
 
     let newBoard = board.map(arr => arr.slice());
         
-    console.log(newBoard);
+    // console.log(newBoard);
 }
 
 const printStat = () => {
 
     if (winner(board)[0] == 1) statWin[0]++;
     if (winner(board)[0] == 2) statWin[1]++;
-    console.log(winner(board), statWin);
+    console.log(winner(board), Math.abs(winner(board)[1] - winner(board)[2]), statWin);
     // alert(winner(board));
 
 }
@@ -99,6 +101,17 @@ const setBoard = () => {
     //          [2,1,1,1,1,0,2,1],
     //          [2,1,1,2,1,1,2,2],
     //          [2,2,2,2,2,1,1,1]];
+
+    // board = [[2,1,1,1,1,1,1,1],
+    //          [2,1,2,2,1,1,2,0],
+    //          [2,1,2,2,1,0,2,0],
+    //          [2,1,1,1,1,1,2,2],
+    //          [2,1,1,1,1,2,1,2],
+    //          [2,1,1,1,1,0,2,1],
+    //          [2,1,1,2,1,1,2,2],
+    //          [2,2,2,2,2,1,1,1]];
+
+
 }
 
 const setBoard2 = () => {
@@ -111,6 +124,25 @@ const setBoard2 = () => {
              [2,1,1,1,1,1,2,1],
              [2,1,1,2,1,1,2,2],
              [2,2,2,2,2,1,1,1]];
+
+
+    // board = [[2, 2, 2, 2, 2, 2, 2, 1],
+    //          [2, 1, 1, 2, 2, 1, 1, 1],
+    //          [2, 1, 2, 1, 2, 2, 1, 1],
+    //          [2, 1, 1, 1, 2, 1, 2, 1],
+    //          [2, 1, 2, 2, 1, 2, 2, 1],
+    //          [2, 1, 2, 1, 1, 1, 2, 1],
+    //          [2, 2, 1, 2, 2, 2, 2, 1],
+    //          [2, 1, 1, 1, 1, 1, 1, 1]];
+
+    // board = [[0,0,0,2,2,2,2,2],
+    //          [0,0,2,2,2,2,2,2],
+    //          [1,2,2,2,1,2,1,2],
+    //          [0,2,2,2,2,1,1,2],
+    //          [2,2,1,2,2,2,1,2],
+    //          [0,2,1,1,1,1,2,2],
+    //          [0,0,2,2,2,2,0,2],
+    //          [0,0,2,0,0,2,0,0]];
 }
 
 const validCoords = (r, c) => {
@@ -284,22 +316,6 @@ const distance = (disks) => {
     return dist;
 }
 
-// const setHints = (moves) => {
-//     for (let move of moves) {
-//         board[move[0]][move[1]] = gray;
-//     }
-// } 
-
-// const clearHints = () => {
-//     for (let r = 0 ; r < 8; r++) {
-//         for(let c = 0; c < 8; c++ ) {  
-//             if (board[r][c] == gray) board[r][c] = 0;
-//             if (board[r][c] == blackDot) board[r][c] = black;
-//             if (board[r][c] == whiteDot) board[r][c] = white;
-//         }
-//     }
-// }
-
 const terminal = (board) => {
 
     let revercedColor = color == black ? white : black;
@@ -351,9 +367,21 @@ const gameOver = () => {
         } else {
             document.querySelector('.board').addEventListener("mousedown", newGame);
         }
-    }, 500 + 500 * 4 + 50 * (winner(board)[1] + winner(board)[2]));
+    // }, 500 + 500 * 4 + 50 * (winner(board)[1] + winner(board)[2]));
 
-    setTimeout(rePlay, 500 + 500 * 4 + 50 * (winner(board)[1] + winner(board)[2]) + 100); //
+    }, 500 + 50 + 50 * (winner(board)[1] + winner(board)[2]));
+
+
+    // console.log("DIFFERENCE: ", Math.abs(winner(board)[1] - winner(board)[2]));
+
+    // console.log(moves);
+
+    if (Math.abs(winner(board)[1] - winner(board)[2]) == 0) console.log(moves);
+
+
+    console.log(board);
+
+    // setTimeout(rePlay, 500 + 500 * 4 + 50 * (winner(board)[1] + winner(board)[2]) + 100); //
 }
 
 const newGame = () => {
@@ -364,7 +392,7 @@ const newGame = () => {
         document.querySelector('.board').removeEventListener("mousedown", newGame);
     }
 
-    firstColor = firstColor == black ? white : black;
+    playerColor = playerColor == black ? white : black;
 
     color = black;
 
@@ -374,11 +402,11 @@ const newGame = () => {
 
     setTimeout(initialDisksPlacement, 1500);
 
-    if (firstColor == black) {
+    if (playerColor == black) {
         setTimeout(() => {
             showHints(getValidMoves(board, color));
             setTimeout(enableTouch, 500);
-        }, 1500 + 2400);
+        }, 1500 + 600 * 4);
         return;
     }   
 
@@ -388,7 +416,7 @@ const newGame = () => {
                 aiTurn(0); //
             });
         });
-    }, 1500 + 2400 - 500);
+    }, 1500 + 600 * 4 - 550);
 }
 
 const rePlay = () => {
@@ -399,9 +427,13 @@ const rePlay = () => {
         document.querySelector('.board').removeEventListener("mousedown", newGame);
     }
 
-    firstColor = firstColor == black ? white : black;
+    // playerColor = playerColor == black ? white : black;
 
-    color = firstColor;
+    moves = []; //
+
+    playerColor = black; //
+
+    color = playerColor;
 
     set++;
     console.log("SET: ", set);
@@ -425,8 +457,10 @@ const rePlay = () => {
 
 const init = () => {
 
-    set++;
-    console.log("SET: ", set);
+    set++;  //
+    console.log("SET: ", set);  //
+
+    moves = []; //
 
     disableTapZoom();
 
@@ -440,9 +474,9 @@ const init = () => {
     showBoard();
 
     setTimeout(initialDisksPlacement, 1000)
-    // setTimeout(initialDisksPlacement2, 1000)
+    // setTimeout(initialDisksPlacement2, 1000 )
 
-    setTimeout(() => showHints(getValidMoves(board, color)), 1000 + 4 * 600);
+    setTimeout(() => showHints(getValidMoves(board, color)), 1000 + 4 * 600); //
 
     setTimeout(() => {
         requestAnimationFrame(() => {
@@ -450,7 +484,7 @@ const init = () => {
                 // aiTurn(0); //
             });
         });
-    }, 1000 + 4 * 600);
+    }, 500 + 4 * 600);
 
     setTimeout(enableTouch, 1000 + 4 * 600 + 500);
 }

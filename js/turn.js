@@ -1,3 +1,4 @@
+
 // const showMove = (r, c) => {
 //     board[r][c] *= -1;
 // }
@@ -111,29 +112,29 @@
 //     }
 // }
 
-const checkMove = () => {
+// const checkMove = () => {
 
-    let disks = document.querySelectorAll('.disk');
+//     let disks = document.querySelectorAll('.disk');
 
-    for (let i = 0; i < 64; i++) {
+//     for (let i = 0; i < 64; i++) {
 
-        if (disks[i].classList.contains("black") && board[Math.floor(i / 8)][i % 8] != 1) {
+//         if (disks[i].classList.contains("black") && board[Math.floor(i / 8)][i % 8] != 1) {
 
-            console.log(Math.floor(i / 8), i % 8);
+//             console.log(Math.floor(i / 8), i % 8);
 
-            return true;
-        };
+//             return true;
+//         };
 
-        if (disks[i].classList.contains("white") && board[Math.floor(i / 8)][i % 8] != 2) {
+//         if (disks[i].classList.contains("white") && board[Math.floor(i / 8)][i % 8] != 2) {
 
-            console.log(Math.floor(i / 8), i % 8);
+//             console.log(Math.floor(i / 8), i % 8);
             
-            return true;
-        }
+//             return true;
+//         }
 
-    }
-    return false;
-}
+//     }
+//     return false;
+// }
 
 const aiTurn = (n) => {
 
@@ -141,11 +142,16 @@ const aiTurn = (n) => {
     let move;
     n = 0;
 
-    let depth = 6;
+    let depth = 10;
 
     if (color == black) {
 
         // move = monteCarlo(board, startTime, color, 2000);
+
+        // move = monteCarlo2(board, color, startTime, 1500);
+
+        // startTime = new Date();
+
 
         move = mcts(board, color, startTime, Math.max(1500, n * 200 + 400 + 1000));
 
@@ -158,40 +164,64 @@ const aiTurn = (n) => {
 
         // console.log(move);
 
+        if (move != null ) moves.push(move[0] * 8 + move[1]);
+
+        // console.log(moves);
+
+        // if (move != null) {
+        //     let el = moves2.shift();
+        //     move = [Math.floor(el / 8), el % 8];
+        // }
+
     } else {
 
         // move = randomAI();
         // move = evristik(board, color);
 
+        // move = monteCarlo2(board, color, startTime, 1500);
+
+        // startTime = new Date();
+
+        // [move, score] = minimax(board, depth, -Infinity, Infinity, true);
+
+
         move = mcts(board, color, startTime, Math.max(1500, n * 200 + 400 + 1000));
 
-        // move = monteCarlo2(board, color, startTime, 1500);
+
+        if (move != null ) moves.push(move[0] * 8 + move[1]);
+
+        // console.log(moves);
+
+        // if (move != null) {
+        //     let el = moves2.shift();
+        //     move = [Math.floor(el / 8), el % 8];
+        // }
 
     }
 
     // if (checkMove()) return;
 
     if (move == null) {
-        console.log("PASS: ", color);
+        // console.log("PASS: ", color);
         reverseColor();
 
         if (getValidMoves(board, color).length == 0) {
-            console.log("PASS: ", color);
-            printStat();
+            // console.log("PASS: ", color);
+            printStat();        //
             setTimeout(gameOver, 1000);
             // setTimeout(rePlay, Math.max(2000, n * 200 + 400 + 2000));  //
             return;
         }
 
-        showHints(getValidMoves(board, color)); //
+        showHints(getValidMoves(board, color));     //
 
         setTimeout(enableTouch, 0);
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                // setTimeout(aiTurn, 100, 0); //
-            });
-        });  
+        // requestAnimationFrame(() => {
+        //     requestAnimationFrame(() => {
+        //         setTimeout(aiTurn, 50, 0); //
+        //     });
+        // });  
 
         return;
     }
@@ -199,19 +229,19 @@ const aiTurn = (n) => {
 
     let disks = makeMove(board, color, move[0], move[1]);
 
-    setTimeout(flipDisks, 50, disks, color);
+    setTimeout(flipDisks, 20, disks, color);
 
     // flipDisks(disks);
 
     printBoard();
-    reverseColor();;
+    reverseColor();
 
     if (getValidMoves(board, color).length == 0) {
-        console.log("PASS: ", color);
+        // console.log("PASS: ", color);
         reverseColor();
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                setTimeout(aiTurn, 100, distance(disks));
+                setTimeout(aiTurn, 50, distance(disks));
             });
         }); 
         return;
@@ -223,7 +253,7 @@ const aiTurn = (n) => {
         showHints(getValidMoves(board, color)); //
         enableTouch();
     // }, 400 + distance(disks) * 200 + 100);
-    }, 1000 + 100);
+    }, 1100);
 
 
     // setTimeout(showHints, 2000, validMoves);
@@ -246,11 +276,11 @@ const humanTurn = (e) => {
 
     if (!validMove(board, color, r, c)) return;
 
+    let disks = makeMove(board, color, r, c);
+
     disableTouch();
 
     hideHints();
-
-    let disks = makeMove(board, color, r, c);
 
     flipDisks(disks, color);
 
@@ -260,7 +290,7 @@ const humanTurn = (e) => {
 
     if (terminal(board)) {
         console.log(winner(board))
-        printStat();
+        printStat();    //
         setTimeout(gameOver, 1000);
     } else {
         requestAnimationFrame(() => {

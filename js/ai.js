@@ -1,3 +1,5 @@
+// let nodes; //
+
 const createNode = (node, color, move) => {
 
     let tempBoard = node.board.map(arr => arr.slice());
@@ -184,6 +186,9 @@ const simulation = (node) => {
 const backprapogation = (node, color) => {
 
     do {
+        
+        // if (node.plays == Number.MIN_VALUE) nodes++; //
+
         node.plays++;
         if (node.color == color) node.wins++;
         node = node.parent;
@@ -191,6 +196,8 @@ const backprapogation = (node, color) => {
 } 
 
 const mcts = (board, color, startTime, timeLimit) => {
+
+    nodes = 0;  //
 
     if (getValidMoves(board, color).length == 0) return null;
 
@@ -214,6 +221,8 @@ const mcts = (board, color, startTime, timeLimit) => {
 
     console.log(i, color);
 
+    // console.log("NODES: ", nodes);
+
     // alert(i);
 
     let bestMove;
@@ -222,6 +231,8 @@ const mcts = (board, color, startTime, timeLimit) => {
     for (child of tree.children) {
 
         let value = child.wins / child.plays;
+
+        // console.log(child.move, value);
 
         if (value > bestValue) [bestValue, bestMove] = [value, child.move];
     }
