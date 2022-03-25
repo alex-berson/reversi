@@ -4,8 +4,7 @@ const files = [
   'index.html',
   'css/style.css',
   'js/reversi.js',
-  'js/mcts.js',
-  'js/turn.js',
+  'js/ai.js',
   'js/ui.js',
   'fonts/roboto-regular-webfont.woff',
   'fonts/roboto-bold-webfont.woff'
