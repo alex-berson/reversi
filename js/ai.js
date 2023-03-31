@@ -134,12 +134,12 @@ const mcts = (board, color, startTime, timeLimit) => {
 
         backprapogation(node, winner);
 
-    } while (!timeOver(startTime, timeLimit));
+    } while (Date.now() - startTime < timeLimit);
 
     let bestMove;
     let bestValue = -Infinity;
 
-    for (child of tree.children) {
+    for (let child of tree.children) {
 
         let value = child.wins / child.plays;
 

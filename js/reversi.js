@@ -4,6 +4,7 @@ const black = 1;
 const white = 2;
 const timeLimit = 1500;
 let playerColor = black;
+
 let color = playerColor;
 
 if ('serviceWorker' in navigator) {
@@ -18,9 +19,9 @@ if ('serviceWorker' in navigator) {
     });
 } 
 
-const timeOver = (startTime, timeLimit) => new Date() - startTime >= timeLimit;
-
 const reverseColor = () => color = color == black ? white : black;
+
+const validCoords = (r, c) => r >= 0 && r <= 7 && c >= 0 && c <= 7;
 
 const shuffle = (array) => {
 
@@ -44,13 +45,6 @@ const initBoard = () => {
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0]];
-}
-
-const validCoords = (r, c) => {
-
-    if (r < 0 || r > 7 || c < 0 || c > 7) return false;
-
-    return true;
 }
 
 const validMove = (board, color, r, c) => {
@@ -130,10 +124,11 @@ const makeMove = (board, color, r, c) => {
     return flippedDisks;
 }
 
-const aiTurn = () => {
+const aiTurn = ({initial = false} = {}) => {
 
-    let startTime = new Date();
-    let move = mcts(board, color, startTime, timeLimit);
+    let moves = [[2,3],[3,2],[4,5],[5,4]];
+    let startTime = Date.now();
+    let move = initial ? moves[Math.trunc(Math.random() * 4)] : mcts(board, color, startTime, timeLimit);
 
     if (move == null) {
 
@@ -276,10 +271,11 @@ const newGame = () => {
     setTimeout(() => {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                aiTurn();
+                aiTurn({initial: true});
             });
         });
-    }, 1500 + 600 * 4 - 550);
+    }, 1500 + 600 * 4 + 500);
+
 }
 
 const init = () => {
@@ -294,8 +290,4 @@ const init = () => {
     setTimeout(enableTouch, 1000 + 4 * 600 + 200);
 }
 
-window.onload = () => {
-    document.fonts.ready.then(() => {
-        init();
-    }); 
-};
+window.onload = () => document.fonts.ready.then(init());

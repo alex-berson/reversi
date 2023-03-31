@@ -1,7 +1,7 @@
 let disks = document.querySelectorAll('.disk');
 let squares = document.querySelectorAll('.square');
 
-const showBoard = () => document.querySelector("body").style.opacity = 1;
+const showBoard = () => document.body.style.opacity = 1;
 
 const touchScreen = () => matchMedia('(hover: none)').matches;
 
@@ -19,7 +19,6 @@ const clearBoard = () => {
     }
 
     setTimeout(() => {
-
         for (let disk of disks) {
             disk.classList.remove("black", "white");
             disk.innerText = '';
@@ -92,22 +91,6 @@ const hideHints = () => {
     }
 }
 
-const changeColor = (e) => {
-
-    let disk = e.currentTarget;
-
-    disk.style.animation = "";
-
-    if (disk.classList.contains("black")) {
-        disk.classList.remove("black");
-        disk.classList.add("white");
-        return;
-    }
-
-    disk.classList.remove("white");
-    disk.classList.add("black");
-}
-
 const flipDisks = (flippedDisks, color) => {
     
     let [r, c] =  [flippedDisks[0][0], flippedDisks[0][1]];
@@ -120,7 +103,20 @@ const flipDisks = (flippedDisks, color) => {
 
     for (let disk of flippedDisks) {
         disks[disk[0] * 8 + disk[1]].style.animation = `inversion 0.9s 1 linear forwards`;
-        disks[disk[0] * 8 + disk[1]].addEventListener('animationend', changeColor); 
+        disks[disk[0] * 8 + disk[1]].addEventListener('animationend', (e) => {
+
+            let disk = e.currentTarget;
+
+            disk.style.animation = "";
+        
+            if (disk.classList.contains("black")) {
+                disk.classList.remove("black");
+                disk.classList.add("white");
+            } else {
+                disk.classList.remove("white");
+                disk.classList.add("black");
+            }
+        }, {once: true}); 
     }
 }
 
@@ -143,6 +139,7 @@ const setBoardSize = () => {
 const disableTapZoom = () => {
     const preventDefault = (e) => e.preventDefault();
     document.body.addEventListener('touchstart', preventDefault, {passive: false});
+    document.body.addEventListener('mousedown', preventDefault, {passive: false});
 }
 
 const enableTouch = () => {
