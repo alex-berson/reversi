@@ -1,35 +1,22 @@
-let board = [];
-const empty = 0;
-const black = 1;
-const white = 2;
-const timeLimit = 1500;
-let playerColor = black;
+let board;
+let size = 8;
+let empty = 0;
+let black = 1;
+let white = 2;
+let human = black;
+let player = human;
 
-let color = playerColor;
+const togglePlayer = () => player = player == black ? white : black;
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(reg => {
-                console.log('Service worker registered!', reg);
-            })
-            .catch(err => {
-                console.log('Service worker registration failed: ', err);
-            });
-    });
-} 
-
-const reverseColor = () => color = color == black ? white : black;
-
-const validCoords = (r, c) => r >= 0 && r <= 7 && c >= 0 && c <= 7;
+const validCoords = (r, c) => r >= 0 && r < size && c >= 0 && c < size;
 
 const shuffle = (array) => {
 
     for (let i = array.length - 1; i > 0; i--) {
 
-        const j = Math.floor(Math.random() * (i + 1));
+        let j = Math.trunc(Math.random() * (i + 1));
 
-        [array[i], array[j]] = [array[j], array[i]]; 
+        [array[i], array[j]] = [array[j], array[i]];
     }
 
     return array;
@@ -49,14 +36,16 @@ const initBoard = () => {
 
 const validMove = (board, color, r, c) => {
 
-    let reversedColor = color == black ? white : black;
+    let opponent = color == black ? white : black;
     let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
 
     if (board[r][c] != empty) return false;
 
     for (let dir of dirs) {
-        if (validCoords(r + dir[0], c + dir[1]) && board[r + dir[0]][c + dir[1]] == reversedColor) { 
-            for (let i = 2; i < 8; i++) {
+
+        if (validCoords(r + dir[0], c + dir[1]) && board[r + dir[0]][c + dir[1]] == opponent) {
+
+            for (let i = 2; i < size; i++) {
                 if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == empty) break;
                 if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == color) return true;
             }
@@ -69,11 +58,11 @@ const validMove = (board, color, r, c) => {
 const randomMove = (board, color) => {
 
     let rows = shuffle([0,1,2,3,4,5,6,7]);
-    let columns = shuffle([0,1,2,3,4,5,6,7]);
+    let cols = shuffle([0,1,2,3,4,5,6,7]);
 
-    for (let row of rows) {
-        for (let column of columns) {  
-            if (validMove(board, color, row, column)) return [row, column];
+    for (let r of rows) {
+        for (let c of cols) {
+            if (validMove(board, color, r, c)) return {r, c};
         }
     }
 
@@ -84,120 +73,140 @@ const availableMoves = (board, color) => {
 
     let moves = [];
 
-    for (let r = 0 ; r < 8; r++) {
-        for(let c = 0; c < 8; c++ ) {  
-            if (validMove(board, color, r, c)) moves.push([r, c]);
+    for (let r = 0 ; r < size; r++) {
+        for(let c = 0; c < size; c++) {
+            if (validMove(board, color, r, c)) moves.push({r, c});
         }
     }
 
     return moves;
 }
 
-const makeMove = (board, color, r, c) => {
+const makeMove = (board, color, move) => {
 
-    let reversedColor = color == black ? white : black;
+    let {r, c} = move;
+    let flippedDisks = [move];
+    let opponent = color == black ? white : black;
     let dirs = [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]];
-
-    let flippedDisks = [[r, c, 0]];
 
     for (let dir of dirs) {
 
         let tempFlipped = [];
 
-        if (validCoords(r + dir[0], c + dir[1]) && board[r + dir[0]][c + dir[1]] == reversedColor) { 
-            tempFlipped.push([r + dir[0],c + dir[1], 1]);
-            for (let i = 2; i < 8; i++) {
+        if (validCoords(r + dir[0], c + dir[1]) && board[r + dir[0]][c + dir[1]] == opponent) {
+
+            tempFlipped.push({r:r + dir[0], c:c + dir[1]});
+
+            for (let i = 2; i < size; i++) {
                 if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == empty) break;
-                if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == reversedColor) {
-                    tempFlipped.push([r + dir[0] * i, c + dir[1] * i, i]);
+                if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == opponent) {
+                    tempFlipped.push({r:r + dir[0] * i, c:c + dir[1] * i});
                 }
                 if (validCoords(r + dir[0] * i, c + dir[1] * i) && board[r + dir[0] * i][c + dir[1] * i] == color) {
-                    flippedDisks  = flippedDisks.concat(tempFlipped);
+                    flippedDisks = flippedDisks.concat(tempFlipped);
                     break;
                 }
             }
         }
     }
 
-    flippedDisks.forEach(disk => board[disk[0]][disk[1]] = color);
+    flippedDisks.forEach(disk => board[disk.r][disk.c] = color);
 
     return flippedDisks;
 }
 
+const boardFull = (board) => {
+
+    for (let r = 0 ; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+            if (board[r][c] == empty) return false;
+        }
+    }
+
+    return true;
+} 
+
+const gameOver = (board) => {
+
+    let opponent = player == black ? white : black;
+    
+    return boardFull(board) || (availableMoves(board, player).length == 0 &&
+           availableMoves(board, opponent).length == 0);
+}
+
 const aiTurn = ({initial = false} = {}) => {
 
-    let moves = [[2,3],[3,2],[4,5],[5,4]];
+    let timeLimit = 1500;
     let startTime = Date.now();
-    let move = initial ? moves[Math.trunc(Math.random() * 4)] : mcts(board, color, startTime, timeLimit);
+    let moves = [{r:2,c:3},{r:3,c:2},{r:4,c:5},{r:5,c:4}];
+    let move = initial ? moves[Math.trunc(Math.random() * 4)] :
+                         mcts(board, player, startTime, timeLimit);
 
     if (move == null) {
 
-        reverseColor();
+        togglePlayer();
 
-        if (availableMoves(board, color).length == 0) {
-            setTimeout(gameOver, 1000);
+        if (availableMoves(board, player).length == 0) {
+            setTimeout(endGame, 1000);
             return;
         }
 
-        showHints(availableMoves(board, color));
-        setTimeout(enableTouch, 0);
+        showHints();
+        setTimeout(enableTouch, 200);
+        
         return;
     }
 
-    let disks = makeMove(board, color, move[0], move[1]);
+    let disks = makeMove(board, player, move);
 
-    setTimeout(flipDisks, 20, disks, color);
+    setTimeout(flipDisks, 20, disks, player);
 
-    reverseColor();
+    togglePlayer();
 
-    if (availableMoves(board, color).length == 0) {
-        reverseColor();
+    if (availableMoves(board, player).length == 0) {
+
+        togglePlayer();
+
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 setTimeout(aiTurn, 50);
             });
         }); 
+
         return;
     }
 
     setTimeout(() => {
-        showHints(availableMoves(board, color));
-        enableTouch();
+        showHints();
+        setTimeout(enableTouch, 200);
     }, 1100);
 }
 
-const humanTurn = (e) => {  
+const humanTurn = (e) => {
 
     let square = e.currentTarget;
     let [r, c] = squareCoords(square);
+    let move = {r, c};
 
-    if (!validMove(board, color, r, c)) return;
+    if (!validMove(board, player, r, c)) return;
 
-    let disks = makeMove(board, color, r, c);
+    let disks = makeMove(board, player, move);
 
     disableTouch();
     hideHints();
-    flipDisks(disks, color);
-    reverseColor();
+    flipDisks(disks, player);
+    togglePlayer();
 
-    if (terminal(board)) {
-        setTimeout(gameOver, 1000);
+    if (gameOver(board)) {
+        setTimeout(endGame, 1000);
         return;
     }
     
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            setTimeout(aiTurn, 0);
+            aiTurn();
         });
     });  
-    
-}
-
-const terminal = (board) => {
-
-    let revercedColor = color == black ? white : black;
-    
-    return boardFull(board) || (availableMoves(board, color).length == 0 && availableMoves(board, revercedColor).length == 0);
 }
 
 const winner = (board) => {
@@ -205,64 +214,30 @@ const winner = (board) => {
     let whites = 0;
     let blacks = 0;
 
-    for (let r = 0 ; r < 8; r++) {
-        for (let c = 0; c < 8; c++ ) {  
+    for (let r = 0 ; r < size; r++) {
+        for (let c = 0; c < size; c++) {
             if (board[r][c] == white) whites++;
-            if (board[r][c] == black) blacks++;   
+            if (board[r][c] == black) blacks++;
         }
     }
 
-    switch (Math.sign(blacks - whites)) {
-        case 1:
-            return [1, blacks, whites];
-        case 0:
-            return [0, blacks, whites];
-        case -1:
-            return [2, blacks, whites];
-    }
-}
+    let diff = blacks - whites;
 
-const boardFull = (board) => {
-
-    for (let r = 0 ; r < 8; r++) {
-        for (let c = 0; c < 8; c++ ) {  
-            if (board[r][c] != black && board[r][c] != white) return false;
-        }
-    }
-    return true;
-} 
-
-const gameOver = () => {
-
-    setTimeout(countDisks, 500);
-
-    setTimeout(() => {
-        if (touchScreen()){
-            document.querySelector('.board').addEventListener("touchstart", newGame);
-        } else {
-            document.querySelector('.board').addEventListener("mousedown", newGame);
-        }
-    }, 500 + 50 + 50 * (winner(board)[1] + winner(board)[2]));
+    return [diff > 0 ? black : diff < 0 ? white : 0, blacks, whites];
 }
 
 const newGame = () => {
 
-    if (touchScreen()){
-        document.querySelector('.board').removeEventListener("touchstart", newGame);
-    } else {
-        document.querySelector('.board').removeEventListener("mousedown", newGame);
-    }
+    human = human == black ? white : black;
+    player = black;
 
-    playerColor = playerColor == black ? white : black;
-    color = black;
-
-    initBoard();
     clearBoard();
-    setTimeout(initialDisksPlacement, 1500);
+    initBoard();
+    setTimeout(startingSetup, 1500);
 
-    if (playerColor == black) {
+    if (human == black) {
         setTimeout(() => {
-            showHints(availableMoves(board, color));
+            showHints();
             setTimeout(enableTouch, 200);
         }, 1500 + 600 * 4);
         return;
@@ -275,19 +250,21 @@ const newGame = () => {
             });
         });
     }, 1500 + 600 * 4 + 500);
+}
 
+const registerServiceWorker = () => {
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
 }
 
 const init = () => {
-
+    registerServiceWorker();
     disableTapZoom();
     setBoardSize();
     initBoard();
-    clearBoard();
     showBoard();
-    setTimeout(initialDisksPlacement, 1000)
-    setTimeout(() => showHints(availableMoves(board, color)), 1000 + 4 * 600);
+    setTimeout(startingSetup, 1000)
+    setTimeout(showHints, 1000 + 4 * 600);
     setTimeout(enableTouch, 1000 + 4 * 600 + 200);
 }
 
-window.onload = () => document.fonts.ready.then(init());
+window.onload = () => document.fonts.ready.then(init);

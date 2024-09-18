@@ -1,16 +1,16 @@
 const createRoot = (board, color) => {
 
-    let revercedColor = color == black ? white : black;
-    let root = {};
-
-    root.board = board.map(arr => arr.slice());
-    root.parent = null;
-    root.color = revercedColor;
-    root.plays = Number.MIN_VALUE;
-    root.wins = 0;
-    root.children = [];
-
     let moves = shuffle(availableMoves(board, color));
+    let reversedColor = color == black ? white : black;
+
+    let root = {
+        board: board.map(arr => arr.slice()),
+        parent: null,
+        color: reversedColor,
+        plays: Number.MIN_VALUE,
+        wins: 0,
+        children: []
+    }
 
     for (let move of moves) {
         createNode(root, color, move);
@@ -23,19 +23,17 @@ const createNode = (node, color, move) => {
 
     let tempBoard = node.board.map(arr => arr.slice());
 
-    makeMove(tempBoard, color, move[0], move[1]);
+    makeMove(tempBoard, color, move);
 
-    node.children.push({});
-    
-    let n = node.children.length - 1;
-
-    node.children[n].board = tempBoard;
-    node.children[n].move = move;
-    node.children[n].parent = node;
-    node.children[n].color = color;
-    node.children[n].plays = Number.MIN_VALUE;
-    node.children[n].wins = 0;
-    node.children[n].children = [];
+    node.children.push({
+        board: tempBoard,
+        move: move,
+        parent: node,
+        color: color,
+        plays: Number.MIN_VALUE,
+        wins: 0,
+        children: []
+    });
 } 
 
 const selection = (tree) => {
@@ -66,8 +64,11 @@ const expansion = (node) => {
     let moves = shuffle(availableMoves(node.board, color));
 
     if (moves.length == 0) {
+
         moves = shuffle(availableMoves(node.board, node.color));
+
         if (moves.length == 0) return node;
+        
         color = node.color;
     }
 
@@ -96,7 +97,7 @@ const simulation = (node) => {
             if (move == null) return winner(tempBoard)[0];
         }
         
-        makeMove(tempBoard, color, move[0], move[1]);
+        makeMove(tempBoard, color, move);
 
         color = color == black ? white : black;
                 
@@ -104,7 +105,6 @@ const simulation = (node) => {
 
     return winner(tempBoard)[0];
 }
-
 
 const backprapogation = (node, color) => {
 
@@ -115,7 +115,7 @@ const backprapogation = (node, color) => {
 
         node = node.parent;
 
-    } while (node != null)
+    } while (node != null);
 } 
 
 const mcts = (board, color, startTime, timeLimit) => {

@@ -1,13 +1,13 @@
-const cacheName = 'cache-v1';
+const cacheName = 'cache-v2';
 const files = [
-  'https://alex-berson.github.io/reversi/',
+  '/',
   'index.html',
   'css/style.css',
   'js/reversi.js',
   'js/ai.js',
   'js/ui.js',
-  'fonts/roboto-regular-webfont.woff',
-  'fonts/roboto-bold-webfont.woff'
+  'fonts/roboto-regular.woff',
+  'fonts/roboto-bold.woff'
 ];
 
 self.addEventListener('install', event => {

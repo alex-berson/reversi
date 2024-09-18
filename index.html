@@ -3,25 +3,24 @@
 <head>
     <title>Reversi</title>
     <meta charset="UTF-8">
-    <meta name="description" content="Get more disks of your color than your opponent.">
-    <meta name="keywords" content="black,white,day,night,dark,light,yin,yang,moon,disk,64,checkers,board,game,logic,strategy,kids,family">
+    <meta name="description" content="Get more disks of your color than your opponent">
+    <meta name="keywords" content="board,game,play,online,othello,disk,logic,tactic,strategy,brain,mind,school,kids,family">
     <meta name="author" content="Alexander Berson">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
     <meta name="google" content="notranslate">
-    <meta name="apple-itunes-app" content="app-id=1604531367"> 
+    <meta name="apple-itunes-app" content="app-id=1604531367">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Reversi">
-    <meta name="theme-color" content="#ffffff">
     <meta name="msapplication-TileColor" content="#2f4f4f">
     <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
     <link rel="shortcut icon" href="images/icons/favicon.ico">
-    <link rel="mask-icon" href="images/icons/safari-pinned-tab.svg" color="#2f4f4f">  
+    <link rel="mask-icon" href="images/icons/safari-pinned-tab.svg" color="#2f4f4f">
     <link rel="manifest" href="manifest.json">
 
     <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -29,7 +28,7 @@
     <script src="js/ui.js" defer></script>
     <script src="js/reversi.js" defer></script>
 </head>
-<body>
+<body class="noselect">
     <div id="outer">
         <div id="middle">
             <div id ="inner">
@@ -38,198 +37,70 @@
                 </header>
                 <main>
                     <div class="board">
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>  
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>  
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>  
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>
-                        <div class="square">
-                            <div class="disk"></div>
-                        </div>   
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
+                        <div class="square"><div class="disk"></div></div>
                     </div>
                 </main>
                 <footer>
